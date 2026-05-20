@@ -28,12 +28,13 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
-    private CustomUserDetailsServcie customUserDetailsServcie;
+    private CustomUserDetailsService customUserDetailsServcie;
 
     public RegisterUserResponseDto registerUser(RegisterUserRequestDto requestDto) {
 
         User user = modelMapper.map(requestDto, User.class);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setRole("ROLE_USER");
 
         User savedUser = userRepository.save(user);
 

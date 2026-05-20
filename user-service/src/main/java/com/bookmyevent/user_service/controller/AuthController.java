@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,14 +21,14 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<RegisterUserResponseDto>> register(RegisterUserRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<RegisterUserResponseDto>> register(@RequestBody RegisterUserRequestDto requestDto) {
         RegisterUserResponseDto responseDto = authService.registerUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, "User registered successfully", responseDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginUserResponseDto>> login(LoginUserRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<LoginUserResponseDto>> login(@RequestBody LoginUserRequestDto requestDto) {
         LoginUserResponseDto responseDto = authService.login(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)

@@ -30,4 +30,7 @@ public class RegisterUserRequestDto {
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in past")
     private LocalDate dateOfBirth;
+
+    @NotBlank(message = "Role is required")
+    private String role;
 }
