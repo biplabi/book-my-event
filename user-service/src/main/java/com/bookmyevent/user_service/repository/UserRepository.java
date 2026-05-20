@@ -1,6 +1,6 @@
-package com.bookmyevent.booking_service.repository;
+package com.bookmyevent.user_service.repository;
 
-import com.bookmyevent.booking_service.entity.User;
+import com.bookmyevent.user_service.entity.User;
 import jakarta.validation.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 

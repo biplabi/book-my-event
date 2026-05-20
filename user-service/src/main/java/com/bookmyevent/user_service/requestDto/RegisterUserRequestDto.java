@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.requestDto;
+package com.bookmyevent.user_service.requestDto;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;

@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.security;
+package com.bookmyevent.user_service.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

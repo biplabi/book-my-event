@@ -1,7 +1,7 @@
-package com.bookmyevent.booking_service.service;
+package com.bookmyevent.user_service.service;
 
-import com.bookmyevent.booking_service.entity.User;
-import com.bookmyevent.booking_service.repository.UserRepository;
+import com.bookmyevent.user_service.entity.User;
+import com.bookmyevent.user_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

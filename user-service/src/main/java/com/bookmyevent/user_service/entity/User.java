@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.entity;
+package com.bookmyevent.user_service.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

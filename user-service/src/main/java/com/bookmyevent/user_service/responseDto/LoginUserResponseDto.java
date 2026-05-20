@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.responseDto;
+package com.bookmyevent.user_service.responseDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

@@ -1,18 +1,17 @@
-package com.bookmyevent.booking_service.service;
+package com.bookmyevent.user_service.service;
 
-import com.bookmyevent.booking_service.entity.User;
-import com.bookmyevent.booking_service.repository.UserRepository;
-import com.bookmyevent.booking_service.requestDto.LoginUserRequestDto;
-import com.bookmyevent.booking_service.requestDto.RegisterUserRequestDto;
-import com.bookmyevent.booking_service.responseDto.LoginUserResponseDto;
-import com.bookmyevent.booking_service.responseDto.RegisterUserResponseDto;
-import com.bookmyevent.booking_service.security.JwtUtil;
+import com.bookmyevent.user_service.entity.User;
+import com.bookmyevent.user_service.repository.UserRepository;
+import com.bookmyevent.user_service.requestDto.LoginUserRequestDto;
+import com.bookmyevent.user_service.requestDto.RegisterUserRequestDto;
+import com.bookmyevent.user_service.responseDto.LoginUserResponseDto;
+import com.bookmyevent.user_service.responseDto.RegisterUserResponseDto;
+import com.bookmyevent.user_service.security.JwtUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.controller;
+package com.bookmyevent.user_service.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,12 +1,11 @@
-package com.bookmyevent.booking_service.controller;
+package com.bookmyevent.user_service.controller;
 
-import com.bookmyevent.booking_service.requestDto.LoginUserRequestDto;
-import com.bookmyevent.booking_service.responseDto.ApiResponse;
-import com.bookmyevent.booking_service.responseDto.LoginUserResponseDto;
-import com.bookmyevent.booking_service.responseDto.RegisterUserResponseDto;
-import com.bookmyevent.booking_service.requestDto.RegisterUserRequestDto;
-import com.bookmyevent.booking_service.service.AuthService;
-import com.bookmyevent.booking_service.service.UserService;
+import com.bookmyevent.user_service.requestDto.LoginUserRequestDto;
+import com.bookmyevent.user_service.responseDto.ApiResponse;
+import com.bookmyevent.user_service.responseDto.LoginUserResponseDto;
+import com.bookmyevent.user_service.responseDto.RegisterUserResponseDto;
+import com.bookmyevent.user_service.requestDto.RegisterUserRequestDto;
+import com.bookmyevent.user_service.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.bookmyevent.booking_service.configuration;
+package com.bookmyevent.user_service.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
