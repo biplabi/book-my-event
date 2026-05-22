@@ -1,6 +1,7 @@
 package com.bookmyevent.user_service.responseDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ public class UserProfileResponseDto {
     private String lastName;
     private Long phoneNumber;
     private String email;
-    private String password;
     private LocalDate dateOfBirth;
     private String role;
     private boolean isActive;
