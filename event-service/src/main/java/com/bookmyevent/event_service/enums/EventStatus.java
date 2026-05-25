@@ -1,6 +1,6 @@
 package com.bookmyevent.event_service.enums;
 
-public enum TicketStatus {
+public enum EventStatus {
     DRAFT,
     ACTIVE,
     INACTIVE,

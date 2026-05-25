@@ -1,6 +1,6 @@
 package com.bookmyevent.event_service.enums;
 
-public enum TicketType {
+public enum TicketTypeEnum {
     VIP,
     PREMIUM,
     GENERAL
