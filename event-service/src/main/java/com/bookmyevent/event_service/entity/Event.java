@@ -1,5 +1,6 @@
 package com.bookmyevent.event_service.entity;
 
+import com.bookmyevent.event_service.enums.EventCategory;
 import com.bookmyevent.event_service.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,10 +34,13 @@ public class Event {
             name = "event_ticket_types",
             joinColumns = @JoinColumn(name = "event_id")
     )
-    private List<TicketType> ticketType;
+    private List<TicketType> ticketTypes;
+    @Enumerated(EnumType.STRING)
+    private EventCategory eventCategory;
     private String city;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
+    @Enumerated(EnumType.STRING)
     private EventStatus status;
     private Long organizerId;
     private String description;

@@ -18,10 +18,10 @@ public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private int age;
-    private String city;
+    private String stageName;
+    private String genre;
+    private String bio;
+    private String imageUrl;
     private String country;
     @ManyToMany(mappedBy = "artists")
     private List<Event> events;
