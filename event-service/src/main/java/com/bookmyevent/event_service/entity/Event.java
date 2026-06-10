@@ -37,7 +37,9 @@ public class Event {
     private List<TicketType> ticketTypes;
     @Enumerated(EnumType.STRING)
     private EventCategory eventCategory;
-    private String city;
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    private Venue venues;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     @Enumerated(EnumType.STRING)

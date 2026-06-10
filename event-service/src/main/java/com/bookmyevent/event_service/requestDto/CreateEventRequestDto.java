@@ -1,9 +1,8 @@
 package com.bookmyevent.event_service.requestDto;
-
-import com.bookmyevent.event_service.entity.Artist;
-import com.bookmyevent.event_service.entity.TicketType;
+import com.bookmyevent.event_service.entity.Venue;
 import com.bookmyevent.event_service.enums.EventCategory;
-import com.bookmyevent.event_service.enums.EventStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,12 +19,14 @@ public class CreateEventRequestDto {
     @NotBlank(message = "Event name is required!")
     private String name;
     private List<Long> artistIds;
+    @Valid
     private List<TicketTypeRequestDto> ticketTypes;
     @NotNull(message = "Event category is required!")
     private EventCategory eventCategory;
-    @NotBlank(message = "City is required!")
-    private String city;
+    @NotNull(message = "Venue is required!")
+    private Venue venue;
     @NotNull(message = "Start date and time is required!")
+    @Future(message = "Start date must be in future!")
     private LocalDateTime startDateTime;
     @NotNull(message = "End date and time is required!")
     private LocalDateTime endDateTime;
