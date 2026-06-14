@@ -1,5 +1,4 @@
 package com.bookmyevent.event_service.requestDto;
-import com.bookmyevent.event_service.entity.Venue;
 import com.bookmyevent.event_service.enums.EventCategory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
@@ -23,8 +22,8 @@ public class CreateEventRequestDto {
     private List<TicketTypeRequestDto> ticketTypes;
     @NotNull(message = "Event category is required!")
     private EventCategory eventCategory;
-    @NotNull(message = "Venue is required!")
-    private Venue venue;
+    @NotNull(message = "Venue id is required!")
+    private Long venueId;
     @NotNull(message = "Start date and time is required!")
     @Future(message = "Start date must be in future!")
     private LocalDateTime startDateTime;
