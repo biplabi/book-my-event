@@ -23,6 +23,4 @@ public class Artist {
     private String bio;
     private String imageUrl;
     private String country;
-    @ManyToMany(mappedBy = "artists")
-    private List<Event> events;
 }

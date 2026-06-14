@@ -1,0 +1,27 @@
+services:
+  app:
+    build: .
+    image: event_service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/event_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: event_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+

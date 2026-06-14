@@ -39,7 +39,7 @@ public class Event {
     private EventCategory eventCategory;
     @ManyToOne
     @JoinColumn(name = "venue_id")
-    private Venue venues;
+    private Venue venue;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     @Enumerated(EnumType.STRING)
