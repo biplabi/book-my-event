@@ -9,7 +9,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ArtistServiceImpl implements ArtistService {
@@ -30,5 +33,13 @@ public class ArtistServiceImpl implements ArtistService {
         Artist savedArtist = artistRepository.save(artist);
 
         return modelMapper.map(savedArtist, ArtistResponseDto.class);
+    }
+
+    @Override
+    public List<ArtistResponseDto> getAllArtists() {
+        List<Artist> artistList =  artistRepository.findAll();
+        return artistList.stream()
+                .map(artist -> modelMapper.map(artist, ArtistResponseDto.class))
+                .toList();
     }
 }
