@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class Address {
     private String street;
     private String city;
-    private String zipCode;
+    private String pinCode;
     private String country;
 }
