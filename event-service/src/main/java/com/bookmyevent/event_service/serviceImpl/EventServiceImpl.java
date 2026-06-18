@@ -44,6 +44,13 @@ public class EventServiceImpl implements EventService {
 
         List<Artist> artists = resolveArtists(requestDto.getArtistIds());
         List<TicketType> ticketTypes = mapTicketTypes(requestDto.getTicketTypes());
+        int totalSeatCapacity = 0;
+        totalSeatCapacity = requestDto.getTicketTypes().stream()
+                .mapToInt(TicketTypeRequestDto::getSeatCount)
+                .sum();
+        if(venue.getSeatCapacity() != totalSeatCapacity) {
+            throw new RuntimeException("venue seat capacity is less than the total seat capacity!");
+        }
 
         Event event = Event.builder()
                 .name(requestDto.getName())
