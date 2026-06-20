@@ -1,6 +1,8 @@
 package com.bookmyevent.event_service.serviceImpl;
 
 import com.bookmyevent.event_service.entity.Artist;
+import com.bookmyevent.event_service.exception.DuplicateResourceException;
+import com.bookmyevent.event_service.exception.ResourceNotFoundException;
 import com.bookmyevent.event_service.repository.ArtistRepository;
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
@@ -11,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class ArtistServiceImpl implements ArtistService {
@@ -27,7 +27,7 @@ public class ArtistServiceImpl implements ArtistService {
         Optional<Artist> artistOptional = artistRepository.findByStageName(requestDto.getStageName());
 
         if(artistOptional.isPresent()) {
-            throw new RuntimeException("Duplicate artist found!");
+            throw new DuplicateResourceException("Duplicate artist found!");
         }
         Artist artist = modelMapper.map(requestDto, Artist.class);
         Artist savedArtist = artistRepository.save(artist);

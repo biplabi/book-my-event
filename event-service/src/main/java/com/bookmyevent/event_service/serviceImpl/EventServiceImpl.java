@@ -4,6 +4,9 @@ import com.bookmyevent.event_service.entity.Artist;
 import com.bookmyevent.event_service.entity.Event;
 import com.bookmyevent.event_service.entity.TicketType;
 import com.bookmyevent.event_service.entity.Venue;
+import com.bookmyevent.event_service.exception.InsufficientSeatCapacityException;
+import com.bookmyevent.event_service.exception.ResourceNotFoundException;
+import com.bookmyevent.event_service.exception.DuplicateResourceException;
 import com.bookmyevent.event_service.repository.ArtistRepository;
 import com.bookmyevent.event_service.repository.EventRepository;
 import com.bookmyevent.event_service.repository.VenueRepository;
@@ -40,16 +43,16 @@ public class EventServiceImpl implements EventService {
         validateEventRequestDto(requestDto);
 
         Venue venue = venueRepository.findById(requestDto.getVenueId())
-                .orElseThrow(() -> new RuntimeException("Venue not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Venue not found!"));
 
         List<Artist> artists = resolveArtists(requestDto.getArtistIds());
         List<TicketType> ticketTypes = mapTicketTypes(requestDto.getTicketTypes());
-        int totalSeatCapacity = 0;
-        totalSeatCapacity = requestDto.getTicketTypes().stream()
+        int totalSeatsRequired = 0;
+        totalSeatsRequired = requestDto.getTicketTypes().stream()
                 .mapToInt(TicketTypeRequestDto::getSeatCount)
                 .sum();
-        if(venue.getSeatCapacity() != totalSeatCapacity) {
-            throw new RuntimeException("venue seat capacity is less than the total seat capacity!");
+        if(totalSeatsRequired > venue.getSeatCapacity()) {
+            throw new InsufficientSeatCapacityException("venue seat capacity is less than the required seats!");
         }
 
         Event event = Event.builder()
@@ -60,6 +63,7 @@ public class EventServiceImpl implements EventService {
                 .venue(venue)
                 .startDateTime(requestDto.getStartDateTime())
                 .endDateTime(requestDto.getEndDateTime())
+                .organizerId(requestDto.getOrganizerId())
                 .description(requestDto.getDescription())
                 .build();
 
@@ -68,14 +72,31 @@ public class EventServiceImpl implements EventService {
         return toResponseDto(savedEvent);
     }
 
+    public List<EventResponseDto> getAllEvents() {
+        List<Event> eventList = eventRepository.findAll();
+        List<EventResponseDto> eventResponseDtos = eventList.stream()
+                .map(this::toResponseDto)
+                .toList();
+        return eventResponseDtos;
+    }
+
+    @Override
+    public EventResponseDto getEventById(Long id) {
+
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        Event event = eventOptional.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
+
+        return toResponseDto(event);
+    }
+
     private void validateEventRequestDto(CreateEventRequestDto requestDto) {
         Optional<Event> eventOptional = eventRepository.findByName(requestDto.getName());
         if(eventOptional.isPresent()) {
-            throw new RuntimeException("Event already exists!");
+            throw new DuplicateResourceException("Event already exists!");
         }
 
         if(requestDto.getEndDateTime().isBefore(requestDto.getStartDateTime())) {
-            throw new RuntimeException("End date must be after start date!");
+            throw new DuplicateResourceException("End date must be after start date!");
         }
     }
 
@@ -85,7 +106,7 @@ public class EventServiceImpl implements EventService {
         }
         List<Artist> artists = artistRepository.findAllById(artistIds);
         if(artists.size() != artistIds.size()) {
-            throw new RuntimeException("One or more artists not found!");
+            throw new ResourceNotFoundException("One or more artists not found!");
         }
         return artists;
     }

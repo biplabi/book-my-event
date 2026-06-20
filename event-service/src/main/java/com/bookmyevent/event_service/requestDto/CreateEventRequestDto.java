@@ -29,6 +29,7 @@ public class CreateEventRequestDto {
     private LocalDateTime startDateTime;
     @NotNull(message = "End date and time is required!")
     private LocalDateTime endDateTime;
+    private Long organizerId;
     @NotBlank(message = "Event description is required!")
     private String description;
 }

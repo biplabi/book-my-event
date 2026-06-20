@@ -2,6 +2,7 @@ package com.bookmyevent.event_service.serviceImpl;
 
 import com.bookmyevent.event_service.entity.Address;
 import com.bookmyevent.event_service.entity.Venue;
+import com.bookmyevent.event_service.exception.DuplicateResourceException;
 import com.bookmyevent.event_service.repository.VenueRepository;
 import com.bookmyevent.event_service.requestDto.CreateVenueRequestDto;
 import com.bookmyevent.event_service.responseDto.AddressResponseDto;
@@ -26,7 +27,7 @@ public class VenueServiceImpl implements VenueService {
     public VenueResponseDto createVenue(CreateVenueRequestDto requestDto) {
         Optional<Venue> venueOptional = venueRepository.findByName(requestDto.getName());
         if(venueOptional.isPresent()) {
-            throw new RuntimeException("Venue already exists!");
+            throw new DuplicateResourceException("Venue already exists!");
         }
 
         Venue venue = Venue.builder()
