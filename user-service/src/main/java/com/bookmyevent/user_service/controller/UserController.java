@@ -3,6 +3,7 @@ package com.bookmyevent.user_service.controller;
 import com.bookmyevent.user_service.requestDto.PasswordChangeRequestDto;
 import com.bookmyevent.user_service.responseDto.UserProfileResponseDto;
 import com.bookmyevent.user_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<String> changePassword(@AuthenticationPrincipal String username, @RequestBody PasswordChangeRequestDto requestDto) {
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal String username, @RequestBody @Valid PasswordChangeRequestDto requestDto) {
         String message = userService.changePassword(username, requestDto);
 
         return ResponseEntity.ok(message);

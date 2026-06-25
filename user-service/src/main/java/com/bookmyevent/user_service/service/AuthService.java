@@ -1,6 +1,7 @@
 package com.bookmyevent.user_service.service;
 
 import com.bookmyevent.user_service.entity.User;
+import com.bookmyevent.user_service.exception.ResourceNotFoundException;
 import com.bookmyevent.user_service.repository.UserRepository;
 import com.bookmyevent.user_service.requestDto.LoginUserRequestDto;
 import com.bookmyevent.user_service.requestDto.RegisterUserRequestDto;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -32,6 +35,10 @@ public class AuthService {
 
     public RegisterUserResponseDto registerUser(RegisterUserRequestDto requestDto) {
 
+        Optional<User> userOptional =  userRepository.findByEmail(requestDto.getEmail());
+        if(userOptional.isPresent()) {
+            throw new ResourceNotFoundException("User already exists!");
+        }
         User user = modelMapper.map(requestDto, User.class);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.setRole("ROLE_USER");
@@ -46,6 +53,10 @@ public class AuthService {
     }
 
     public LoginUserResponseDto login(LoginUserRequestDto requestDto) {
+        Optional<User> userOptional =  userRepository.findByEmail(requestDto.getEmail());
+        if(userOptional.isEmpty()) {
+            throw new ResourceNotFoundException("User is not registered!");
+        }
         String username = requestDto.getEmail();
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

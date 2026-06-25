@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+
+  #-------------------Infrastructure------------------
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  #-------------------Services------------------------
+
+  user-service:
+    build: ./user-service
+    container_name: user_service
+    ports:
+      - "8081:8081"
+    environment:
+      spring_datasource_url: jdbc:postgresql://postgres:5432/user_db
+      spring_datasource_username: postgres
+      spring_datasource_password: root
+    depends_on:
+      - postgres
+
+  event-service:
+    build: ./event-service
+    container_name: event_service
+    ports:
+      - "8082:8082"
+    environment:
+      spring_datasource_url: jdbc:postgresql://postgres:5432/event_db
+      spring_datasource_username: postgres
+      spring_datasource_password: root
+    depends_on:
+      - postgres
+
+  #------------------Volumes------------------------------
+
+volumes:
+  postgres_data:

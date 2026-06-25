@@ -23,14 +23,11 @@ public class RegisterUserRequestDto {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be 8 characters long")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)(?=.*[@$!%*?&]).+$",
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&]).+$",
     message = "Password must contain uppercase, lowercase, digit, and special character")
     private String password;
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in past")
     private LocalDate dateOfBirth;
-
-    @NotBlank(message = "Role is required")
-    private String role;
 }
