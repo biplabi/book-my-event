@@ -1,5 +1,6 @@
 package com.bookmyevent.user_service.security;
 
+import com.bookmyevent.user_service.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -21,6 +22,9 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        if(userDetails instanceof CustomUserDetails custom) {
+            claims.put("userId", custom.getUserId());
+        }
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList());
@@ -44,6 +48,11 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token)
+                .get("userId", Long.class);
     }
 
     @SuppressWarnings("unchecked")
