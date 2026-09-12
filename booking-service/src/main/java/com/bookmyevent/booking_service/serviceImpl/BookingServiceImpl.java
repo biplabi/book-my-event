@@ -4,7 +4,6 @@ import com.bookmyevent.booking_service.entity.Booking;
 import com.bookmyevent.booking_service.entity.Ticket;
 import com.bookmyevent.booking_service.requestDto.BookingRequestDto;
 import com.bookmyevent.booking_service.responseDto.BookingResponseDto;
-import com.bookmyevent.booking_service.security.JwtUtil;
 import com.bookmyevent.booking_service.service.BookingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
