@@ -14,3 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+event:
+  service:
+    url: ${EVENT_SERVICE_URL:http://localhost:8082}
