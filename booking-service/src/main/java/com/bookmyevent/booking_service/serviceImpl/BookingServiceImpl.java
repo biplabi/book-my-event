@@ -6,13 +6,12 @@ import com.bookmyevent.booking_service.enums.BookingStatus;
 import com.bookmyevent.booking_service.enums.TicketTypeEnum;
 import com.bookmyevent.booking_service.exception.ResourceNotFoundException;
 import com.bookmyevent.booking_service.feign.EventServiceClient;
+import com.bookmyevent.booking_service.feign.PaymentServiceClient;
 import com.bookmyevent.booking_service.repository.BookingRepository;
 import com.bookmyevent.booking_service.requestDto.BookingRequestDto;
+import com.bookmyevent.booking_service.requestDto.PaymentRequestDto;
 import com.bookmyevent.booking_service.requestDto.TicketRequestDto;
-import com.bookmyevent.booking_service.responseDto.ApiResponse;
-import com.bookmyevent.booking_service.responseDto.BookingResponseDto;
-import com.bookmyevent.booking_service.responseDto.EventResponseDto;
-import com.bookmyevent.booking_service.responseDto.TicketTypeResponseDto;
+import com.bookmyevent.booking_service.responseDto.*;
 import com.bookmyevent.booking_service.service.BookingService;
 import feign.FeignException;
 import org.modelmapper.ModelMapper;
@@ -32,6 +31,8 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private EventServiceClient eventServiceClient;
     @Autowired
+    private PaymentServiceClient paymentServiceClient;
+    @Autowired
     private BookingRepository bookingRepository;
 
     @Override
@@ -50,9 +51,15 @@ public class BookingServiceImpl implements BookingService {
                 .build();
         booking = bookingRepository.save(booking);
 
-        //bookingClient.initiatePayment(booking);
+        PaymentResponseDto paymentResonseDto = initiatePayment(booking);
 
-        return null;
+        if("SUCCESS".equals(paymentResonseDto.getPaymentStatus())) {
+            booking.setStatus(BookingStatus.PAYMENT_SUCCESS);
+            booking.setPaymentReference(paymentResonseDto.getTransactionId());
+        }
+
+        booking = bookingRepository.save(booking);
+        return modelMapper.map(booking, BookingResponseDto.class);
     }
 
     private EventResponseDto validateBookingRequestDto(BookingRequestDto requestDto) {
@@ -85,5 +92,17 @@ public class BookingServiceImpl implements BookingService {
                 .map(t -> ticketPricing.get(t.getTicketType())
                         .multiply(BigDecimal.valueOf(t.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private PaymentResponseDto initiatePayment(Booking booking) {
+        PaymentRequestDto paymentRequestDto = new PaymentRequestDto(
+                booking.getId(),
+                booking.getTotalAmount(),
+                booking.getUserId()
+        );
+
+        PaymentResponseDto paymentResponseDto = paymentServiceClient.initiatePayment(paymentRequestDto).getData();
+
+        return paymentResponseDto;
     }
 }
