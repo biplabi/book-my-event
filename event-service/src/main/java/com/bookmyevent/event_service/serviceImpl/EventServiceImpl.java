@@ -4,7 +4,9 @@ import com.bookmyevent.event_service.entity.Artist;
 import com.bookmyevent.event_service.entity.Event;
 import com.bookmyevent.event_service.entity.TicketType;
 import com.bookmyevent.event_service.entity.Venue;
+import com.bookmyevent.event_service.enums.EventStatus;
 import com.bookmyevent.event_service.exception.InsufficientSeatCapacityException;
+import com.bookmyevent.event_service.exception.InvalidStatusTransitionException;
 import com.bookmyevent.event_service.exception.ResourceNotFoundException;
 import com.bookmyevent.event_service.exception.DuplicateResourceException;
 import com.bookmyevent.event_service.repository.ArtistRepository;
@@ -72,8 +74,11 @@ public class EventServiceImpl implements EventService {
         return toResponseDto(savedEvent);
     }
 
-    public List<EventResponseDto> getAllEvents() {
-        List<Event> eventList = eventRepository.findAll();
+    @Override
+    public List<EventResponseDto> getAllEvents(boolean includeUnpublished) {
+        List<Event> eventList = includeUnpublished
+                ? eventRepository.findAll()
+                : eventRepository.findByStatus(EventStatus.PUBLISHED);
         List<EventResponseDto> eventResponseDtos = eventList.stream()
                 .map(this::toResponseDto)
                 .toList();
@@ -87,6 +92,27 @@ public class EventServiceImpl implements EventService {
         Event event = eventOptional.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 
         return toResponseDto(event);
+    }
+
+    @Override
+    @Transactional
+    public EventResponseDto updateEventStatus(Long id, EventStatus status) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
+
+        if(event.getStatus() == status) {
+            return toResponseDto(event);
+        }
+        if(event.getStatus() == EventStatus.CANCELLED || event.getStatus() == EventStatus.COMPLETED) {
+            throw new InvalidStatusTransitionException("A " + event.getStatus().name().toLowerCase() + " event can't be changed!");
+        }
+        // COMPLETED is reached once the event has happened, not set by hand.
+        if(status == EventStatus.COMPLETED) {
+            throw new InvalidStatusTransitionException("Events can't be marked completed manually!");
+        }
+
+        event.setStatus(status);
+        return toResponseDto(eventRepository.save(event));
     }
 
     private void validateEventRequestDto(CreateEventRequestDto requestDto) {

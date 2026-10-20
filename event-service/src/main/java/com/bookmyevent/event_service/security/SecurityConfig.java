@@ -3,6 +3,7 @@ package com.bookmyevent.event_service.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,10 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Let error responses through so clients see the real status, not a 403.
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/event/", "/venue/", "/artist/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/event/*/status").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")
                         .anyRequest().authenticated()

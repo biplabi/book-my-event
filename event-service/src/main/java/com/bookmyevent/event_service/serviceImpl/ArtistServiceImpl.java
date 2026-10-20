@@ -42,4 +42,12 @@ public class ArtistServiceImpl implements ArtistService {
                 .map(artist -> modelMapper.map(artist, ArtistResponseDto.class))
                 .toList();
     }
+
+    @Override
+    public ArtistResponseDto getArtist(Long id) {
+       Optional<Artist> artistOptional = artistRepository.findById(id);
+       Artist artist = artistOptional.orElseThrow(() ->
+               new ResourceNotFoundException("Artist not found with id: " + id + "!"));
+       return modelMapper.map(artist, ArtistResponseDto.class);
+    }
 }

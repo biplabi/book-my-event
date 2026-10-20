@@ -4,6 +4,7 @@ import com.bookmyevent.booking_service.entity.Booking;
 import com.bookmyevent.booking_service.entity.Ticket;
 import com.bookmyevent.booking_service.enums.BookingStatus;
 import com.bookmyevent.booking_service.enums.TicketTypeEnum;
+import com.bookmyevent.booking_service.exception.BookingNotAllowedException;
 import com.bookmyevent.booking_service.exception.ResourceNotFoundException;
 import com.bookmyevent.booking_service.feign.EventServiceClient;
 import com.bookmyevent.booking_service.feign.PaymentServiceClient;
@@ -66,18 +67,32 @@ public class BookingServiceImpl implements BookingService {
         return modelMapper.map(booking, BookingResponseDto.class);
     }
 
+    @Override
+    public List<BookingResponseDto> getAllBookings() {
+        return bookingRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(booking -> modelMapper.map(booking, BookingResponseDto.class))
+                .toList();
+    }
+
     private EventResponseDto validateBookingRequestDto(BookingRequestDto requestDto) {
         try{
             EventResponseDto event = eventServiceClient.getEventById(requestDto.getEventId()).getData();
             if(null == event){
                 throw new ResourceNotFoundException("Event not found with id: " + requestDto.getEventId());
             }
+            if(!"PUBLISHED".equals(event.getStatus())) {
+                throw new BookingNotAllowedException("Event is not open for booking!");
+            }
             if(null != event.getTicketTypes() && null != requestDto.getTickets()){
                 Map<TicketTypeEnum, Integer> availableTypes = event.getTicketTypes().stream()
                         .collect(Collectors.toMap(TicketTypeResponseDto::getType, TicketTypeResponseDto::getAvailableSeatCount));
 
                 for(TicketRequestDto ticket : requestDto.getTickets()) {
-                    if(ticket.getQuantity() > availableTypes.get(ticket.getTicketType())) {
+                    Integer available = availableTypes.get(ticket.getTicketType());
+                    if(available == null) {
+                        throw new BookingNotAllowedException("This event doesn't offer " + ticket.getTicketType() + " tickets!");
+                    }
+                    if(ticket.getQuantity() > available) {
                         throw new ResourceNotFoundException("Requested tickets are not available of type: " + ticket.getTicketType());
                     }
                 }

@@ -1,12 +1,14 @@
 package com.bookmyevent.event_service.controller;
 
 import com.bookmyevent.event_service.requestDto.CreateEventRequestDto;
+import com.bookmyevent.event_service.requestDto.UpdateEventStatusRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
 import com.bookmyevent.event_service.responseDto.EventResponseDto;
 import com.bookmyevent.event_service.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,10 @@ public class EventController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<EventResponseDto>>> getAllEvents() {
-        List<EventResponseDto> eventList = eventService.getAllEvents();
+    public ResponseEntity<ApiResponse<List<EventResponseDto>>> getAllEvents(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
+        List<EventResponseDto> eventList = eventService.getAllEvents(isAdmin);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Events fetched successfully!", eventList));
     }
@@ -36,5 +40,12 @@ public class EventController {
         EventResponseDto responseDto = eventService.getEventById(id);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Event fetched with is: " + id, responseDto));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<EventResponseDto>> updateEventStatus(@PathVariable Long id, @RequestBody @Valid UpdateEventStatusRequestDto requestDto) {
+        EventResponseDto responseDto = eventService.updateEventStatus(id, requestDto.getStatus());
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Event status updated to " + requestDto.getStatus(), responseDto));
     }
 }

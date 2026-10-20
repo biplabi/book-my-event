@@ -30,4 +30,11 @@ public class ArtistController {
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Artist list fetch successfully!", artistList));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ArtistResponseDto>> getArtist(@PathVariable Long id) {
+        ArtistResponseDto artist = artistService.getArtist(id);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Artist list fetch successfully!", artist));
+    }
 }

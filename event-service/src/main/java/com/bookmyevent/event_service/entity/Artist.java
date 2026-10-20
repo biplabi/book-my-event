@@ -20,7 +20,9 @@ public class Artist {
     private Long id;
     private String stageName;
     private String genre;
+    @Column(length = 1000)
     private String bio;
+    @Column(length = 2048)
     private String imageUrl;
     private String country;
 }

@@ -4,6 +4,7 @@ import com.bookmyevent.event_service.requestDto.CreateVenueRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
 import com.bookmyevent.event_service.responseDto.VenueResponseDto;
 import com.bookmyevent.event_service.service.VenueService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class VenueController {
     private VenueService venueService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<VenueResponseDto>> createVenue(@RequestBody CreateVenueRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<VenueResponseDto>> createVenue(@RequestBody @Valid CreateVenueRequestDto requestDto) {
         VenueResponseDto responseDto = venueService.createVenue(requestDto);
         return ResponseEntity.ok(new ApiResponse<>(true, "Venue created successfully!", responseDto));
     }

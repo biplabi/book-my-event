@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
@@ -27,5 +29,11 @@ public class BookingController {
 
         BookingResponseDto responseDto = bookingService.bookEvent(requestDto, userId);
         return ResponseEntity.ok(new ApiResponse<>(true, "Event booked successfully.", responseDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<BookingResponseDto>>> getAllBookings() {
+        List<BookingResponseDto> bookings = bookingService.getAllBookings();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Bookings fetched successfully!", bookings));
     }
 }

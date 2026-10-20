@@ -7,9 +7,11 @@ import com.bookmyevent.user_service.responseDto.UserProfileResponseDto;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +29,12 @@ public class UserService {
         User savedUser = userOptional.orElseThrow();
 
         return modelMapper.map(savedUser, UserProfileResponseDto.class);
+    }
+
+    public List<UserProfileResponseDto> getAllUsers() {
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream()
+                .map(user -> modelMapper.map(user, UserProfileResponseDto.class))
+                .toList();
     }
 
     @Transactional

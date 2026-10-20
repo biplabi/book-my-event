@@ -21,6 +21,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(BookingNotAllowedException.class)
+    public ResponseEntity<CustomErrorResponse> handleBookingNotAllowedException(BookingNotAllowedException ex, HttpServletRequest request) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                false,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<CustomErrorResponse> handleDuplicateResourceException(DuplicateResourceException ex, HttpServletRequest request) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(
