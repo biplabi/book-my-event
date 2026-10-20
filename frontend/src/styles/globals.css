@@ -2,75 +2,34 @@
 
 /* ------------------------------------------------------------------ */
 /* Design tokens                                                       */
+/*                                                                     */
+/* Gig-poster palette: warm ink, cream "paper" for text and lines, and */
+/* a single brand red (BookMyShow's). Use it sparingly — primary        */
+/* actions, the accent word in a headline, hover affordances.          */
 /* ------------------------------------------------------------------ */
 @theme {
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
 
-  --color-ink-950: #07060b;
-  --color-ink-900: #0d0b14;
-  --color-ink-800: #15121f;
-  --color-ink-700: #221d31;
+  --color-ink-950: #0e0d0b;
+  --color-ink-900: #151411;
+  --color-ink-800: #1c1a16;
+  --color-ink-700: #2a2722;
 
-  --color-rose: #ff4d8d;
-  --color-violet: #8b5cf6;
+  /* Foreground. Use with opacity for secondary text and hairlines. */
+  --color-paper: #f2ede4;
+
+  --color-brand: #e03553;
+  --color-brand-hover: #c72a45;
+  --color-signal: #ff8a5c;
   --color-amber: #ffb547;
-  --color-mint: #34d399;
 
-  --animate-drift-a: drift-a 22s ease-in-out infinite;
-  --animate-drift-b: drift-b 28s ease-in-out infinite;
-  --animate-drift-c: drift-c 34s ease-in-out infinite;
-  --animate-gradient-pan: gradient-pan 6s linear infinite;
   --animate-marquee: marquee 40s linear infinite;
-  --animate-shimmer: shimmer 2.4s ease-in-out infinite;
 
-  @keyframes drift-a {
-    0%,
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
-    50% {
-      transform: translate(12vw, 8vh) scale(1.15);
-    }
-  }
-  @keyframes drift-b {
-    0%,
-    100% {
-      transform: translate(0, 0) scale(1.1);
-    }
-    50% {
-      transform: translate(-10vw, -6vh) scale(0.9);
-    }
-  }
-  @keyframes drift-c {
-    0%,
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
-    33% {
-      transform: translate(-6vw, 10vh) scale(1.2);
-    }
-    66% {
-      transform: translate(8vw, -4vh) scale(0.95);
-    }
-  }
-  @keyframes gradient-pan {
-    to {
-      background-position: 200% center;
-    }
-  }
   @keyframes marquee {
     to {
       transform: translateX(-50%);
-    }
-  }
-  @keyframes shimmer {
-    0% {
-      transform: translateX(-120%) skewX(-20deg);
-    }
-    60%,
-    100% {
-      transform: translateX(220%) skewX(-20deg);
     }
   }
 }
@@ -90,18 +49,18 @@
   }
 
   body {
-    @apply bg-ink-950 font-sans text-white antialiased;
+    @apply bg-ink-950 font-sans text-paper antialiased;
     font-feature-settings: 'ss01', 'cv11';
   }
 
   ::selection {
-    @apply bg-rose/40 text-white;
+    @apply bg-brand text-paper;
   }
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #fff;
+    -webkit-text-fill-color: var(--color-paper);
     -webkit-box-shadow: 0 0 0 1000px transparent inset;
     transition: background-color 9999s ease-out 0s;
   }
@@ -116,34 +75,13 @@
 /* ------------------------------------------------------------------ */
 /* Utilities                                                           */
 /* ------------------------------------------------------------------ */
-@utility text-gradient {
-  background-image: linear-gradient(
-    90deg,
-    var(--color-rose),
-    var(--color-violet),
-    var(--color-amber),
-    var(--color-rose)
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
 
-@utility bg-brand-gradient {
-  background-image: linear-gradient(
-    110deg,
-    var(--color-rose) 0%,
-    var(--color-violet) 55%,
-    var(--color-amber) 100%
-  );
-}
-
-@utility bg-grid {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
+/* Small uppercase mono label — dates, categories, metadata. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 @utility bg-noise {
@@ -152,7 +90,7 @@
 
 @utility text-outline {
   color: transparent;
-  -webkit-text-stroke: 1px rgb(255 255 255 / 0.18);
+  -webkit-text-stroke: 1px rgb(242 237 228 / 0.16);
 }
 
 /* Ticket silhouette: two half-circle notches cut out at the perforation line. */
@@ -169,51 +107,6 @@
       no-repeat,
     radial-gradient(circle var(--notch) at 100% var(--notch-y), #0000 98%, #000) right / 51% 100%
       no-repeat;
-}
-
-/* Animated conic border that orbits a rounded card. */
-@property --border-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes border-orbit {
-  to {
-    --border-angle: 360deg;
-  }
-}
-
-@utility glow-border {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    padding: 1px;
-    border-radius: inherit;
-    background: conic-gradient(
-      from var(--border-angle),
-      rgb(255 255 255 / 0.08) 0deg,
-      rgb(255 255 255 / 0.08) 220deg,
-      var(--color-rose) 280deg,
-      var(--color-violet) 320deg,
-      var(--color-amber) 350deg,
-      rgb(255 255 255 / 0.08) 360deg
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box exclude,
-      linear-gradient(#000 0 0);
-    animation: border-orbit 7s linear infinite;
-    pointer-events: none;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

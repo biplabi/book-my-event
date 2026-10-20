@@ -13,7 +13,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
           position="top-center"
           richColors
           toastOptions={{
-            className: '!rounded-2xl !border-white/10 !bg-ink-900/90 !backdrop-blur-xl !font-sans',
+            className: '!rounded-xl !border-paper/10 !bg-ink-900 !text-paper !font-sans',
           }}
         />
       </AuthProvider>

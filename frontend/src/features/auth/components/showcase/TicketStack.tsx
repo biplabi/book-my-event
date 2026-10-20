@@ -11,7 +11,7 @@ const tickets: ShowcaseTicket[] = [
     tier: 'GENERAL',
     price: '₹1,499',
     seat: 'GA',
-    art: 'from-amber via-orange-500 to-rose',
+    tone: 'ink',
   },
   {
     category: 'STANDUP',
@@ -22,7 +22,7 @@ const tickets: ShowcaseTicket[] = [
     tier: 'PREMIUM',
     price: '₹899',
     seat: 'C-07',
-    art: 'from-sky-500 via-indigo-500 to-violet',
+    tone: 'brand',
   },
   {
     category: 'CONCERT',
@@ -33,7 +33,7 @@ const tickets: ShowcaseTicket[] = [
     tier: 'VIP',
     price: '₹4,999',
     seat: 'A-12',
-    art: 'from-rose via-fuchsia-600 to-violet',
+    tone: 'paper',
   },
 ]
 

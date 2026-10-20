@@ -11,11 +11,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary:
-    'bg-brand-gradient text-white shadow-[0_12px_40px_-12px_rgb(255_77_141/0.7)] hover:shadow-[0_16px_50px_-10px_rgb(139_92_246/0.75)] hover:brightness-110',
+  primary: 'bg-brand text-paper hover:bg-brand-hover',
   secondary:
-    'border border-white/10 bg-white/[0.04] text-white/90 hover:border-white/20 hover:bg-white/[0.08]',
-  ghost: 'text-white/60 hover:bg-white/[0.06] hover:text-white',
+    'border border-paper/15 text-paper/90 hover:border-paper/35 hover:bg-paper/[0.04] hover:text-paper',
+  ghost: 'text-paper/60 hover:bg-paper/[0.06] hover:text-paper',
 }
 
 export function Button({
@@ -34,30 +33,22 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(
-        'group/button relative inline-flex h-13 items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 text-[15px] font-semibold tracking-[-0.01em] transition-all duration-300 ease-out select-none',
-        'focus-visible:ring-2 focus-visible:ring-violet/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 focus-visible:outline-none',
-        'active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100',
+        'group/button relative inline-flex h-13 items-center justify-center gap-2 rounded-xl px-6 text-[15px] font-semibold tracking-[-0.01em] transition-colors duration-200 select-none',
+        'focus-visible:ring-2 focus-visible:ring-brand/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 focus-visible:outline-none',
+        'active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60',
         variants[variant],
         className,
       )}
       {...props}
     >
-      {variant === 'primary' && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent"
-        />
+      {loading ? (
+        <>
+          <Spinner className="size-[18px]" />
+          {loadingText ?? children}
+        </>
+      ) : (
+        children
       )}
-      <span className="relative inline-flex items-center gap-2">
-        {loading ? (
-          <>
-            <Spinner className="size-[18px]" />
-            {loadingText ?? children}
-          </>
-        ) : (
-          children
-        )}
-      </span>
     </button>
   )
 }

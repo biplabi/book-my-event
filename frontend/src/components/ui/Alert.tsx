@@ -23,14 +23,14 @@ export function Alert({ children, action, tone = 'error', className }: AlertProp
     >
       <div
         className={cn(
-          'flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm',
+          'flex items-start gap-3 rounded-xl border px-4 py-3 text-sm',
           tone === 'offline'
-            ? 'border-amber/25 bg-amber/[0.07] text-amber'
-            : 'border-rose/25 bg-rose/[0.08] text-rose',
+            ? 'border-amber/25 bg-amber/[0.06] text-amber'
+            : 'border-signal/30 bg-signal/[0.07] text-signal',
         )}
       >
         <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-        <div className="flex-1 leading-relaxed text-white/85">
+        <div className="flex-1 leading-relaxed text-paper/85">
           {children}
           {action && <div className="mt-1.5">{action}</div>}
         </div>

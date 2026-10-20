@@ -4,12 +4,12 @@ import { cn } from '@/lib/cn'
 import { passwordRules } from '../schemas/auth.schemas'
 
 const levels = [
-  { label: 'Too weak', color: 'bg-rose' },
-  { label: 'Weak', color: 'bg-rose' },
+  { label: 'Too weak', color: 'bg-signal' },
+  { label: 'Weak', color: 'bg-signal' },
   { label: 'Fair', color: 'bg-amber' },
   { label: 'Good', color: 'bg-amber' },
-  { label: 'Strong', color: 'bg-violet' },
-  { label: 'Excellent', color: 'bg-mint' },
+  { label: 'Strong', color: 'bg-brand/70' },
+  { label: 'Excellent', color: 'bg-brand' },
 ] as const
 
 export function PasswordStrength({ password }: { password: string }) {
@@ -22,10 +22,7 @@ export function PasswordStrength({ password }: { password: string }) {
       <div className="flex items-center gap-3">
         <div className="flex flex-1 gap-1.5">
           {passwordRules.map((rule, i) => (
-            <div
-              key={rule.id}
-              className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]"
-            >
+            <div key={rule.id} className="h-1 flex-1 overflow-hidden rounded-full bg-paper/[0.08]">
               <motion.div
                 className={cn('h-full rounded-full', level.color)}
                 initial={false}
@@ -35,7 +32,7 @@ export function PasswordStrength({ password }: { password: string }) {
             </div>
           ))}
         </div>
-        <span className="w-16 text-right text-xs font-medium text-white/60">
+        <span className="w-16 text-right text-xs font-medium text-paper/60">
           {password ? level.label : ''}
         </span>
       </div>
@@ -46,13 +43,13 @@ export function PasswordStrength({ password }: { password: string }) {
             key={rule.id}
             className={cn(
               'flex items-center gap-2 text-[12.5px] transition-colors duration-300',
-              passed[i] ? 'text-white/80' : 'text-white/40',
+              passed[i] ? 'text-paper/80' : 'text-paper/40',
             )}
           >
             <span
               className={cn(
                 'grid size-4 shrink-0 place-items-center rounded-full border transition-all duration-300',
-                passed[i] ? 'border-mint bg-mint text-ink-950' : 'border-white/20',
+                passed[i] ? 'border-brand bg-brand text-paper' : 'border-paper/20',
               )}
             >
               <motion.span

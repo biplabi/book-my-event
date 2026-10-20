@@ -114,20 +114,20 @@ export function RegisterForm({ defaultEmail = '', onSwitchToLogin }: RegisterFor
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="font-medium text-white/80"
+              className="font-medium text-paper/80"
             >
               {registerSteps[step]!.title}
             </motion.span>
           </AnimatePresence>
-          <span className="text-white/40 tabular-nums">
+          <span className="font-mono text-paper/40 tabular-nums">
             Step {step + 1} of {registerSteps.length}
           </span>
         </div>
         <div className="flex gap-1.5">
           {registerSteps.map((s, i) => (
-            <div key={s.title} className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
+            <div key={s.title} className="h-0.5 flex-1 overflow-hidden rounded-full bg-paper/10">
               <motion.div
-                className="h-full rounded-full bg-brand-gradient"
+                className="h-full rounded-full bg-brand"
                 initial={false}
                 animate={{ width: i <= step ? '100%' : '0%' }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -147,7 +147,7 @@ export function RegisterForm({ defaultEmail = '', onSwitchToLogin }: RegisterFor
                 <button
                   type="button"
                   onClick={() => onSwitchToLogin(getValues('email'))}
-                  className="font-medium text-white underline decoration-white/30 underline-offset-4 transition hover:decoration-white"
+                  className="font-medium text-paper underline decoration-paper/30 underline-offset-4 transition hover:decoration-paper"
                 >
                   Sign in instead →
                 </button>

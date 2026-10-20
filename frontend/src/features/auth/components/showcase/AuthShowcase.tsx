@@ -1,5 +1,4 @@
 import { motion, useMotionValue } from 'framer-motion'
-import { ShieldCheck, Sparkles, Ticket } from 'lucide-react'
 import type { PointerEvent } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { RotatingWord } from './RotatingWord'
@@ -8,11 +7,7 @@ import { TicketStack } from './TicketStack'
 // Mirrors event-service's EventCategory enum.
 const categories = ['concert', 'stand-up', 'festival', 'jam session', 'webinar'] as const
 
-const highlights = [
-  { icon: Ticket, label: 'Instant e-tickets' },
-  { icon: ShieldCheck, label: 'Secure checkout' },
-  { icon: Sparkles, label: 'Curated lineups' },
-]
+const highlights = ['Instant e-tickets', 'Secure checkout', 'Curated lineups']
 
 const marqueeItems = ['Concerts', 'Stand-up', 'Festivals', 'Jam sessions', 'Webinars']
 
@@ -35,31 +30,30 @@ export function AuthShowcase() {
     <section
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className="relative top-4 hidden h-[calc(100dvh-2rem)] min-h-[640px] flex-col self-start overflow-hidden rounded-[32px] border border-white/[0.07] bg-white/[0.02] p-10 backdrop-blur-sm lg:sticky lg:flex xl:p-12"
+      className="relative top-4 hidden h-[calc(100dvh-2rem)] min-h-[640px] flex-col self-start overflow-hidden rounded-[24px] border border-paper/10 bg-ink-900 p-10 lg:sticky lg:flex xl:p-12"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgb(255_77_141/0.14),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgb(139_92_246/0.16),transparent_55%)]" />
-
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative"
+        className="relative flex items-center justify-between"
       >
         <Logo />
+        <span className="label-mono text-paper/40">Live events · India</span>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative mt-10 max-w-xl [@media(max-height:820px)]:mt-6"
+        className="relative mt-12 max-w-xl [@media(max-height:820px)]:mt-6"
       >
-        <h2 className="text-[52px] leading-[1.02] font-semibold tracking-[-0.045em] text-white xl:text-[64px] [@media(max-height:820px)]:text-[44px]">
+        <h2 className="font-display text-[64px] leading-[0.95] tracking-[-0.02em] text-paper xl:text-[80px] [@media(max-height:820px)]:text-[52px]">
           Every great night
           <br />
           starts with a <RotatingWord words={categories} />
         </h2>
-        <p className="mt-5 max-w-md text-[17px] leading-relaxed text-white/55 [@media(max-height:820px)]:mt-3">
+        <p className="mt-6 max-w-md text-[16px] leading-relaxed text-paper/55 [@media(max-height:820px)]:mt-3">
           Discover live events near you, lock in the best seats and keep every ticket in one place.
         </p>
       </motion.div>
@@ -74,13 +68,11 @@ export function AuthShowcase() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.6 }}
-        className="relative flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60"
+        className="relative flex flex-wrap items-center gap-x-3 gap-y-2 label-mono text-paper/50"
       >
-        {highlights.map(({ icon: Icon, label }) => (
-          <li key={label} className="inline-flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-lg bg-white/[0.06] ring-1 ring-white/10">
-              <Icon className="size-3.5 text-white/80" aria-hidden />
-            </span>
+        {highlights.map((label, i) => (
+          <li key={label} className="inline-flex items-center gap-3">
+            {i > 0 && <span className="text-paper/20">/</span>}
             {label}
           </li>
         ))}
@@ -88,16 +80,16 @@ export function AuthShowcase() {
 
       <div
         aria-hidden
-        className="relative -mx-10 mt-6 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)] xl:-mx-12"
+        className="relative -mx-10 mt-6 overflow-hidden border-t border-paper/10 [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)] pt-5 xl:-mx-12"
       >
         <div className="flex w-max animate-marquee whitespace-nowrap">
           {[...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
             <span
               key={i}
-              className="flex items-center gap-10 pr-10 text-4xl font-semibold tracking-tight text-outline"
+              className="flex items-center gap-10 pr-10 font-display text-5xl text-outline italic"
             >
               {item}
-              <span className="size-2 rounded-full bg-white/15" />
+              <span className="size-1.5 rounded-full bg-brand/60" />
             </span>
           ))}
         </div>

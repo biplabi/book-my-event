@@ -36,7 +36,7 @@ export function PasswordField({ onKeyDown, onKeyUp, onBlur, ...props }: Password
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? 'Hide password' : 'Show password'}
             aria-pressed={visible}
-            className="grid size-10 place-items-center rounded-xl text-white/45 transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-violet/60 focus-visible:outline-none"
+            className="grid size-10 place-items-center rounded-lg text-paper/45 transition-colors hover:bg-paper/[0.06] hover:text-paper focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:outline-none"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span

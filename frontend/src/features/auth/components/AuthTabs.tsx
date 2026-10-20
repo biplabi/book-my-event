@@ -28,7 +28,7 @@ export function AuthTabs({ mode, onChange }: AuthTabsProps) {
       role="tablist"
       aria-label="Authentication"
       onKeyDown={onKeyDown}
-      className="relative grid grid-cols-2 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-1"
+      className="relative grid grid-cols-2 border-b border-paper/10"
     >
       {tabs.map((tab) => {
         const active = tab.mode === mode
@@ -43,14 +43,14 @@ export function AuthTabs({ mode, onChange }: AuthTabsProps) {
             tabIndex={active ? 0 : -1}
             onClick={() => onChange(tab.mode)}
             className={cn(
-              'relative h-10 rounded-xl text-sm font-medium transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-violet/60 focus-visible:outline-none',
-              active ? 'text-white' : 'text-white/45 hover:text-white/75',
+              'relative h-11 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:outline-none',
+              active ? 'text-paper' : 'text-paper/40 hover:text-paper/75',
             )}
           >
             {active && (
               <motion.span
                 layoutId="auth-tab-pill"
-                className="absolute inset-0 rounded-xl bg-white/[0.09] shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_8px_24px_-12px_rgb(0_0_0/0.8)] ring-1 ring-white/10"
+                className="absolute inset-x-0 -bottom-px h-0.5 bg-brand"
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
               />
             )}

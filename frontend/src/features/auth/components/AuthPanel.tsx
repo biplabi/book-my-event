@@ -36,11 +36,9 @@ export function AuthPanel({ mode, prefillEmail, onModeChange }: AuthPanelProps) 
       initial={{ opacity: 0, y: 24, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="glow-border w-full rounded-[28px] bg-ink-900/70 shadow-[0_40px_120px_-30px_rgb(0_0_0/0.9)] backdrop-blur-2xl"
+      className="w-full rounded-[24px] border border-paper/10 bg-ink-900 shadow-[0_40px_120px_-30px_rgb(0_0_0/0.9)]"
     >
-      <div className="relative overflow-hidden rounded-[28px] p-6 sm:p-9">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-
+      <div className="relative overflow-hidden rounded-[24px] p-6 sm:p-9">
         <header className="mb-7">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -50,10 +48,10 @@ export function AuthPanel({ mode, prefillEmail, onModeChange }: AuthPanelProps) 
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
             >
-              <h1 className="text-[30px] leading-tight font-semibold tracking-[-0.035em] text-white sm:text-[34px]">
+              <h1 className="font-display text-[40px] leading-none tracking-[-0.01em] text-paper sm:text-[46px]">
                 {copy[mode].title}
               </h1>
-              <p className="mt-2 text-[15px] leading-relaxed text-white/50">
+              <p className="mt-3 text-[15px] leading-relaxed text-paper/50">
                 {copy[mode].subtitle}
               </p>
             </motion.div>
@@ -97,12 +95,12 @@ export function AuthPanel({ mode, prefillEmail, onModeChange }: AuthPanelProps) 
           </div>
         </motion.div>
 
-        <p className="mt-6 text-center text-[13px] text-white/40">
+        <p className="mt-6 text-center text-[13px] text-paper/40">
           {mode === 'login' ? 'New to BookMyEvent? ' : 'Already have an account? '}
           <button
             type="button"
             onClick={() => onModeChange(mode === 'login' ? 'register' : 'login')}
-            className="font-medium text-white/85 underline decoration-white/20 underline-offset-4 transition hover:text-white hover:decoration-white/70"
+            className="font-medium text-paper/85 underline decoration-paper/25 underline-offset-4 transition hover:text-brand hover:decoration-brand"
           >
             {mode === 'login' ? 'Create an account' : 'Sign in'}
           </button>

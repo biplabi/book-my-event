@@ -23,7 +23,7 @@ export function RotatingWord({ words, intervalMs = 2600 }: RotatingWordProps) {
           animate={{ y: '0%', opacity: 1, filter: 'blur(0px)' }}
           exit={{ y: '-70%', opacity: 0, filter: 'blur(10px)' }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="col-start-1 row-start-1 animate-gradient-pan text-gradient pr-[0.08em] font-display italic"
+          className="col-start-1 row-start-1 pr-[0.08em] text-brand italic"
         >
           {words[index]}
         </motion.span>

@@ -15,7 +15,7 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   ref?: Ref<HTMLInputElement>
 }
 
-const floated = 'top-[17px] text-[11px] font-medium tracking-wide text-white/55'
+const floated = 'top-[17px] text-[11px] font-medium tracking-wide text-paper/55'
 
 export function TextField({
   label,
@@ -48,10 +48,10 @@ export function TextField({
       <div
         ref={scope}
         className={cn(
-          'group relative flex items-center rounded-2xl border bg-white/[0.03] transition-[border-color,background-color,box-shadow] duration-300',
+          'group relative flex items-center rounded-xl border bg-paper/[0.025] transition-[border-color,background-color,box-shadow] duration-200',
           error
-            ? 'border-rose/60 shadow-[0_0_0_4px_rgb(255_77_141/0.12)]'
-            : 'border-white/10 focus-within:border-violet/70 focus-within:bg-white/[0.05] focus-within:shadow-[0_0_0_4px_rgb(139_92_246/0.16)] hover:border-white/20',
+            ? 'border-signal/60 shadow-[0_0_0_3px_rgb(255_138_92/0.14)]'
+            : 'border-paper/12 focus-within:border-brand/70 focus-within:bg-paper/[0.04] focus-within:ring-3 focus-within:ring-brand/15 hover:border-paper/25',
         )}
       >
         {Icon && (
@@ -59,7 +59,7 @@ export function TextField({
             aria-hidden
             className={cn(
               'pointer-events-none absolute left-4 size-[18px] transition-colors duration-300',
-              error ? 'text-rose/80' : 'text-white/35 group-focus-within:text-white/85',
+              error ? 'text-signal/80' : 'text-paper/35 group-focus-within:text-paper/85',
             )}
           />
         )}
@@ -70,7 +70,7 @@ export function TextField({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
           className={cn(
-            'peer h-14 w-full min-w-0 rounded-2xl bg-transparent pt-5 pb-1.5 text-[15px] text-white outline-none placeholder:text-transparent',
+            'peer h-14 w-full min-w-0 rounded-xl bg-transparent pt-5 pb-1.5 text-[15px] text-paper outline-none placeholder:text-transparent',
             Icon ? 'pl-11' : 'pl-4',
             trailing ? 'pr-12' : 'pr-4',
           )}
@@ -79,14 +79,14 @@ export function TextField({
         <label
           htmlFor={inputId}
           className={cn(
-            'pointer-events-none absolute -translate-y-1/2 truncate text-[15px] text-white/45 transition-all duration-200 ease-out',
+            'pointer-events-none absolute -translate-y-1/2 truncate text-paper/45 transition-all duration-200 ease-out',
             Icon ? 'left-11' : 'left-4',
             trailing ? 'right-12' : 'right-4',
             floatLabel
               ? floated
               : cn(
-                  'top-1/2',
-                  'peer-focus:top-[17px] peer-focus:text-[11px] peer-focus:font-medium peer-focus:tracking-wide peer-focus:text-white/55',
+                  'top-1/2 text-[15px]',
+                  'peer-focus:top-[17px] peer-focus:text-[11px] peer-focus:font-medium peer-focus:tracking-wide peer-focus:text-paper/55',
                   'peer-[:not(:placeholder-shown)]:top-[17px] peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-medium peer-[:not(:placeholder-shown)]:tracking-wide',
                 ),
           )}
@@ -106,14 +106,14 @@ export function TextField({
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -4 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden pt-1.5 pl-1 text-[13px] text-rose"
+            className="overflow-hidden pt-1.5 pl-1 text-[13px] text-signal"
           >
             {error}
           </motion.p>
         )}
       </AnimatePresence>
       {hint && !error && (
-        <div id={hintId} className="pt-1.5 pl-1 text-[13px] text-white/45">
+        <div id={hintId} className="pt-1.5 pl-1 text-[13px] text-paper/45">
           {hint}
         </div>
       )}

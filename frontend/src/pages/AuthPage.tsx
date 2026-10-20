@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMatch, useNavigate } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
-import { AuroraBackground } from '@/components/layout/AuroraBackground'
+import { Backdrop } from '@/components/layout/Backdrop'
 import { paths } from '@/config/routes'
 import { AuthPanel } from '@/features/auth/components/AuthPanel'
 import type { AuthMode } from '@/features/auth/components/AuthTabs'
@@ -22,7 +22,7 @@ export function AuthPage() {
 
   return (
     <div className="relative min-h-dvh">
-      <AuroraBackground />
+      <Backdrop />
       <title>{mode === 'login' ? 'Sign in · BookMyEvent' : 'Create account · BookMyEvent'}</title>
 
       <div className="mx-auto grid min-h-dvh max-w-[1600px] grid-cols-1 gap-4 p-4 lg:grid-cols-[1.15fr_1fr]">
@@ -35,7 +35,7 @@ export function AuthPage() {
           <div className="w-full max-w-[460px]">
             <AuthPanel mode={mode} prefillEmail={prefillEmail} onModeChange={changeMode} />
           </div>
-          <p className="mt-8 max-w-sm text-center text-xs leading-relaxed text-white/30">
+          <p className="mt-8 max-w-sm text-center text-xs leading-relaxed text-paper/30">
             By continuing you agree to BookMyEvent&apos;s Terms of Service and acknowledge our
             Privacy Policy.
           </p>

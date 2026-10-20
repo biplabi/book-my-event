@@ -18,6 +18,19 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   return children
 }
 
+/** Only admins. Signed-out users go to /login; signed-in non-admins go home. */
+export function AdminRoute({ children }: { children: ReactNode }) {
+  const { status, user } = useAuth()
+  const location = useLocation()
+
+  if (status === 'loading') return <FullScreenLoader />
+  if (status === 'unauthenticated') {
+    return <Navigate to={paths.login} replace state={{ from: location.pathname }} />
+  }
+  if (user?.role !== 'ROLE_ADMIN') return <Navigate to={paths.home} replace />
+  return children
+}
+
 /** Only signed-out users; signed-in users are sent on to where they were headed. */
 export function PublicOnlyRoute({ children }: { children: ReactNode }) {
   const { status } = useAuth()

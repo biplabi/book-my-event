@@ -57,7 +57,7 @@ export function LoginForm({ defaultEmail = '', onSwitchToRegister }: LoginFormPr
                 <button
                   type="button"
                   onClick={() => onSwitchToRegister(getValues('email'))}
-                  className="font-medium text-white underline decoration-white/30 underline-offset-4 transition hover:decoration-white"
+                  className="font-medium text-paper underline decoration-paper/30 underline-offset-4 transition hover:decoration-paper"
                 >
                   Create an account with this email →
                 </button>

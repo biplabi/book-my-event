@@ -23,6 +23,17 @@ export default defineConfig(({ mode }) => {
           target: env.USER_SERVICE_URL || 'http://localhost:8081',
           changeOrigin: true,
         },
+        // event-service has no /api prefix, so namespace it here and strip it.
+        '/event-service': {
+          target: env.EVENT_SERVICE_URL || 'http://localhost:8082',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/event-service/, ''),
+        },
+        '/booking-service': {
+          target: env.BOOKING_SERVICE_URL || 'http://localhost:8083',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/booking-service/, ''),
+        },
       },
     },
   }
