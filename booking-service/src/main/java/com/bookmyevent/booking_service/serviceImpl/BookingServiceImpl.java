@@ -14,6 +14,7 @@ import com.bookmyevent.booking_service.requestDto.TicketRequestDto;
 import com.bookmyevent.booking_service.responseDto.*;
 import com.bookmyevent.booking_service.service.BookingService;
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class BookingServiceImpl implements BookingService {
 
@@ -53,9 +55,11 @@ public class BookingServiceImpl implements BookingService {
 
         PaymentResponseDto paymentResonseDto = initiatePayment(booking);
 
-        if("SUCCESS".equals(paymentResonseDto.getPaymentStatus())) {
+        if(null != paymentResonseDto && "SUCCESS".equals(paymentResonseDto.getPaymentStatus())) {
             booking.setStatus(BookingStatus.PAYMENT_SUCCESS);
             booking.setPaymentReference(paymentResonseDto.getTransactionId());
+        } else {
+            booking.setStatus(BookingStatus.PAYMENT_FAILED);
         }
 
         booking = bookingRepository.save(booking);
@@ -101,8 +105,11 @@ public class BookingServiceImpl implements BookingService {
                 booking.getUserId()
         );
 
-        PaymentResponseDto paymentResponseDto = paymentServiceClient.initiatePayment(paymentRequestDto).getData();
-
-        return paymentResponseDto;
+        try {
+            return paymentServiceClient.initiatePayment(paymentRequestDto).getData();
+        } catch (FeignException ex) {
+            log.error("Payment initiation failed for booking id: {}", booking.getId(), ex);
+            return null;
+        }
     }
 }

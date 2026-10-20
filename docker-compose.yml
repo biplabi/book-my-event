@@ -41,6 +41,34 @@ services:
     depends_on:
       - postgres
 
+  payment-service:
+    build: ./payment-service
+    container_name: payment_service
+    ports:
+      - "8084:8084"
+    environment:
+      spring_datasource_url: jdbc:postgresql://postgres:5432/event_db
+      spring_datasource_username: postgres
+      spring_datasource_password: root
+    depends_on:
+      - postgres
+
+  booking-service:
+    build: ./booking-service
+    container_name: booking_service
+    ports:
+      - "8083:8083"
+    environment:
+      spring_datasource_url: jdbc:postgresql://postgres:5432/event_db
+      spring_datasource_username: postgres
+      spring_datasource_password: root
+      EVENT_SERVICE_URL: http://event-service:8082
+      PAYMENT_SERVICE_URL: http://payment-service:8084
+    depends_on:
+      - postgres
+      - event-service
+      - payment-service
+
   #------------------Volumes------------------------------
 
 volumes:
