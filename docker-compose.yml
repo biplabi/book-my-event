@@ -15,6 +15,47 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
 
+  # File storage for artist photos (S3-compatible). Console: http://localhost:9001
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # S3 API: uploads and image links
+      - "9001:9001"   # web console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+      # The React dev server uploads straight to MinIO, so allow its origin.
+      MINIO_API_CORS_ALLOW_ORIGIN: http://localhost:5173
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Runs once: creates the bucket, makes artists/ publicly readable and
+  # creates an upload-only user for event-service, then exits.
+  minio-init:
+    image: minio/mc
+    container_name: minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./minio/policies:/policies:ro
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
+      mc mb --ignore-existing local/bookmyevent-media &&
+      mc anonymous set download local/bookmyevent-media/artists &&
+      mc admin user add local event-service event-service-secret &&
+      mc admin policy create local artist-upload /policies/artist-upload.json &&
+      (mc admin policy attach local artist-upload --user event-service || true)
+      "
+
   #-------------------Services------------------------
 
   user-service:
@@ -38,8 +79,15 @@ services:
       spring_datasource_url: jdbc:postgresql://postgres:5432/event_db
       spring_datasource_username: postgres
       spring_datasource_password: root
+      # Upload links are opened by the browser, so they must point at localhost, not "minio".
+      STORAGE_ENDPOINT: http://localhost:9000
+      STORAGE_ACCESS_KEY: event-service
+      STORAGE_SECRET_KEY: event-service-secret
+      STORAGE_BUCKET: bookmyevent-media
+      STORAGE_PUBLIC_BASE_URL: http://localhost:9000/bookmyevent-media
     depends_on:
       - postgres
+      - minio-init
 
   payment-service:
     build: ./payment-service
@@ -73,3 +121,4 @@ services:
 
 volumes:
   postgres_data:
+  minio_data:

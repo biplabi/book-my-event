@@ -8,6 +8,7 @@ import type {
   CreateEventRequest,
   CreateVenueRequest,
   EventStatus,
+  ImageUploadTicket,
   Venue,
 } from '../types'
 
@@ -15,6 +16,11 @@ import type {
 // collections with a trailing slash (`/event/`), booking-service without (`/booking`).
 const EVENTS = '/event-service'
 const BOOKINGS = '/booking-service'
+
+/** The photo couldn't be sent to MinIO (as opposed to an event-service error). */
+export class StorageUploadError extends Error {
+  override name = 'StorageUploadError'
+}
 
 async function unwrap<T>(request: Promise<ApiResponse<T>>) {
   return (await request).data
@@ -54,6 +60,36 @@ export const adminApi = {
 
   createArtist: (token: string, body: CreateArtistRequest) =>
     unwrap(apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/`, { method: 'POST', token, body })),
+
+  /**
+   * Uploads an artist photo and returns its key for `createArtist`. event-service signs a
+   * short-lived link, then the file goes straight from the browser to MinIO.
+   */
+  uploadArtistImage: async (token: string, file: File) => {
+    const ticket = await unwrap(
+      apiRequest<ApiResponse<ImageUploadTicket>>(`${EVENTS}/artist/image-upload-url`, {
+        method: 'POST',
+        token,
+        body: { contentType: file.type, sizeBytes: file.size },
+      }),
+    )
+
+    // No Authorization header: the signature in the URL is the permission. The Content-Type
+    // (and the size, which the browser sets) must match what event-service signed.
+    let res: Response
+    try {
+      res = await fetch(ticket.uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      })
+    } catch {
+      throw new StorageUploadError("Can't reach file storage. Is MinIO running?")
+    }
+    if (!res.ok)
+      throw new StorageUploadError(`Photo upload failed (${res.status}). Please try again.`)
+    return ticket.imageKey
+  },
 
   listBookings: (token: string, signal?: AbortSignal) =>
     unwrap(apiRequest<ApiResponse<Booking[]>>(`${BOOKINGS}/booking`, { token, signal })),

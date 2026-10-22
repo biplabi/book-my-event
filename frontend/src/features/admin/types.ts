@@ -29,8 +29,17 @@ export interface CreateArtistRequest {
   stageName: string
   genre: string
   bio?: string
-  imageUrl?: string
+  /** Key returned by `uploadArtistImage`, e.g. `artists/<uuid>.png`. */
+  imageKey?: string
   country?: string
+}
+
+/** Response of POST /artist/image-upload-url. */
+export interface ImageUploadTicket {
+  /** Signed MinIO link; PUT the file here within a few minutes. */
+  uploadUrl: string
+  imageKey: string
+  imageUrl: string
 }
 
 export interface CreateEventRequest {

@@ -22,7 +22,7 @@ public class Artist {
     private String genre;
     @Column(length = 1000)
     private String bio;
-    @Column(length = 2048)
-    private String imageUrl;
+    /** Path of the photo in the MinIO bucket, e.g. artists/<uuid>.png. The public URL is built from it. */
+    private String imageKey;
     private String country;
 }

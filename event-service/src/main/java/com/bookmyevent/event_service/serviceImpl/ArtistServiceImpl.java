@@ -7,6 +7,7 @@ import com.bookmyevent.event_service.repository.ArtistRepository;
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
+import com.bookmyevent.event_service.service.ImageStorageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class ArtistServiceImpl implements ArtistService {
     private ModelMapper modelMapper;
     @Autowired
     private ArtistRepository artistRepository;
+    @Autowired
+    private ImageStorageService imageStorageService;
 
     @Override
     public ArtistResponseDto createArtist(CreateArtistRequestDto requestDto) {
@@ -32,14 +35,14 @@ public class ArtistServiceImpl implements ArtistService {
         Artist artist = modelMapper.map(requestDto, Artist.class);
         Artist savedArtist = artistRepository.save(artist);
 
-        return modelMapper.map(savedArtist, ArtistResponseDto.class);
+        return toResponseDto(savedArtist);
     }
 
     @Override
     public List<ArtistResponseDto> getAllArtists() {
         List<Artist> artistList =  artistRepository.findAll();
         return artistList.stream()
-                .map(artist -> modelMapper.map(artist, ArtistResponseDto.class))
+                .map(this::toResponseDto)
                 .toList();
     }
 
@@ -48,6 +51,13 @@ public class ArtistServiceImpl implements ArtistService {
        Optional<Artist> artistOptional = artistRepository.findById(id);
        Artist artist = artistOptional.orElseThrow(() ->
                new ResourceNotFoundException("Artist not found with id: " + id + "!"));
-       return modelMapper.map(artist, ArtistResponseDto.class);
+       return toResponseDto(artist);
+    }
+
+    @Override
+    public ArtistResponseDto toResponseDto(Artist artist) {
+        ArtistResponseDto responseDto = modelMapper.map(artist, ArtistResponseDto.class);
+        responseDto.setImageUrl(imageStorageService.toPublicUrl(artist.getImageKey()));
+        return responseDto;
     }
 }

@@ -11,5 +11,8 @@ public interface ArtistService {
     ArtistResponseDto createArtist(CreateArtistRequestDto requestDto);
     List<ArtistResponseDto> getAllArtists();
     ArtistResponseDto getArtist(Long id);
+
+    /** Entity to DTO, turning the stored image key into a public image URL. */
+    ArtistResponseDto toResponseDto(Artist artist);
 }
 

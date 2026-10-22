@@ -13,3 +13,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+storage:
+  # Address the BROWSER uses to reach MinIO. Upload links are signed for this host,
+  # so it must be localhost:9000 (not minio:9000) even when event-service runs in Docker.
+  endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+  # MinIO ignores the region, but the SDK requires one.
+  region: ${STORAGE_REGION:us-east-1}
+  access-key: ${STORAGE_ACCESS_KEY:event-service}
+  secret-key: ${STORAGE_SECRET_KEY:event-service-secret}
+  bucket: ${STORAGE_BUCKET:bookmyevent-media}
+  # Prefix for public image links: <public-base-url>/<imageKey>
+  public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:9000/bookmyevent-media}

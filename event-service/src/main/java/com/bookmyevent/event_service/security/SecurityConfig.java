@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Let error responses through so clients see the real status, not a 403.
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/event/", "/venue/", "/artist/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/event/", "/venue/", "/artist/", "/artist/image-upload-url").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/event/*/status").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")

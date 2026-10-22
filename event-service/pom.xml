@@ -90,6 +90,12 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- S3 client; MinIO speaks the same API. Used to presign image uploads. -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.57.2</version>
+        </dependency>
     </dependencies>
 
 	<build>

@@ -63,17 +63,23 @@ export const venueSchema = z.object({
 })
 export type VenueFormValues = z.infer<typeof venueSchema>
 
-// Limits match the artists table: bio varchar(1000), image_url varchar(2048), the rest varchar(255).
+// Limits match the artists table: bio varchar(1000), the rest varchar(255).
+// The photo is a File picked outside the form, checked by validateArtistImage.
 export const artistSchema = z.object({
   stageName: required('Stage name').max(255, 'Stage name must be at most 255 characters'),
   genre: required('Genre').max(255, 'Genre must be at most 255 characters'),
   country: z.string().trim().max(255, 'Country must be at most 255 characters'),
-  imageUrl: z.union([
-    z.literal(''),
-    z
-      .url('Enter a full URL, e.g. https://…')
-      .max(2048, 'Image URL must be at most 2048 characters'),
-  ]),
   bio: z.string().trim().max(1000, 'Keep the bio under 1000 characters'),
 })
 export type ArtistFormValues = z.infer<typeof artistSchema>
+
+// Mirror ImageUploadRequestDto in event-service.
+export const artistImageTypes = ['image/jpeg', 'image/png', 'image/webp']
+export const artistImageMaxBytes = 5 * 1024 * 1024
+
+/** Error message for an unacceptable photo, or null when it's fine. */
+export function validateArtistImage(file: File) {
+  if (!artistImageTypes.includes(file.type)) return 'Choose a JPEG, PNG or WebP image'
+  if (file.size > artistImageMaxBytes) return 'Image must be at most 5 MB'
+  return null
+}

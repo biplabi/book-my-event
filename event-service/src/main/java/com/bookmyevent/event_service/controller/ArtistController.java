@@ -1,9 +1,12 @@
 package com.bookmyevent.event_service.controller;
 
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
+import com.bookmyevent.event_service.requestDto.ImageUploadRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
+import com.bookmyevent.event_service.responseDto.ImageUploadResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
+import com.bookmyevent.event_service.service.ImageStorageService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +20,20 @@ public class ArtistController {
 
     @Autowired
     private ArtistService artistService;
+    @Autowired
+    private ImageStorageService imageStorageService;
 
     @PostMapping("/")
     public ResponseEntity<ApiResponse<ArtistResponseDto>> createArtist(@RequestBody @Valid CreateArtistRequestDto requestDto) {
         ArtistResponseDto responseDto = artistService.createArtist(requestDto);
         return ResponseEntity.ok(new ApiResponse<>(true, "Artist saved successfully!", responseDto));
+    }
+
+    /** Step 1 of adding a photo: get a signed link, then the browser uploads the file straight to MinIO. */
+    @PostMapping("/image-upload-url")
+    public ResponseEntity<ApiResponse<ImageUploadResponseDto>> createImageUploadUrl(@RequestBody @Valid ImageUploadRequestDto requestDto) {
+        ImageUploadResponseDto responseDto = imageStorageService.createArtistImageUpload(requestDto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Upload URL generated successfully!", responseDto));
     }
 
     @GetMapping("/")

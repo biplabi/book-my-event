@@ -17,6 +17,7 @@ import com.bookmyevent.event_service.requestDto.TicketTypeRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.responseDto.EventResponseDto;
 import com.bookmyevent.event_service.responseDto.TicketTypeResponseDto;
+import com.bookmyevent.event_service.service.ArtistService;
 import com.bookmyevent.event_service.service.EventService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -38,6 +39,8 @@ public class EventServiceImpl implements EventService {
     private VenueRepository venueRepository;
     @Autowired
     private ArtistRepository artistRepository;
+    @Autowired
+    private ArtistService artistService;
 
     @Override
     @Transactional
@@ -154,7 +157,7 @@ public class EventServiceImpl implements EventService {
     private EventResponseDto toResponseDto(Event event) {
         List<ArtistResponseDto> artistResponses = event.getArtists() == null ? Collections.emptyList()
                 : event.getArtists().stream()
-                        .map(artist -> modelMapper.map(artist, ArtistResponseDto.class))
+                        .map(artistService::toResponseDto)
                         .toList();
 
         List<TicketTypeResponseDto> ticketTypeResponses = event.getTicketTypes() == null ? Collections.emptyList()
