@@ -5,9 +5,11 @@ import com.bookmyevent.event_service.exception.DuplicateResourceException;
 import com.bookmyevent.event_service.exception.ResourceNotFoundException;
 import com.bookmyevent.event_service.repository.ArtistRepository;
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
+import com.bookmyevent.event_service.requestDto.UpdateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
 import com.bookmyevent.event_service.service.ImageStorageService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,32 @@ public class ArtistServiceImpl implements ArtistService {
        Artist artist = artistOptional.orElseThrow(() ->
                new ResourceNotFoundException("Artist not found with id: " + id + "!"));
        return toResponseDto(artist);
+    }
+
+    @Override
+    @Transactional
+    public ArtistResponseDto updateArtist(Long id, UpdateArtistRequestDto requestDto) {
+        Artist artist = artistRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Artist not found with id: " + id + "!"));
+
+        // Renaming is fine, but not onto another artist's stage name.
+        artistRepository.findByStageName(requestDto.getStageName())
+                .filter(other -> !other.getId().equals(id))
+                .ifPresent(other -> {
+                    throw new DuplicateResourceException("Another artist already uses this stage name!");
+                });
+
+        artist.setStageName(requestDto.getStageName());
+        artist.setGenre(requestDto.getGenre());
+        artist.setBio(requestDto.getBio());
+        artist.setCountry(requestDto.getCountry());
+        if(requestDto.getImageKey() != null) {
+            artist.setImageKey(requestDto.getImageKey());
+        } else if(requestDto.isRemoveImage()) {
+            artist.setImageKey(null);
+        }
+
+        return toResponseDto(artistRepository.save(artist));
     }
 
     @Override

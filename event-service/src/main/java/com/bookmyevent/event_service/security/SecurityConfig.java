@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/event/", "/venue/", "/artist/", "/artist/image-upload-url").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/event/*/status").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/artist/*").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")
                         .anyRequest().authenticated()

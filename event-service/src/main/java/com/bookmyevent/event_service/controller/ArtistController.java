@@ -2,6 +2,7 @@ package com.bookmyevent.event_service.controller;
 
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
 import com.bookmyevent.event_service.requestDto.ImageUploadRequestDto;
+import com.bookmyevent.event_service.requestDto.UpdateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.responseDto.ImageUploadResponseDto;
@@ -48,5 +49,11 @@ public class ArtistController {
         ArtistResponseDto artist = artistService.getArtist(id);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Artist list fetch successfully!", artist));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ArtistResponseDto>> updateArtist(@PathVariable Long id, @RequestBody @Valid UpdateArtistRequestDto requestDto) {
+        ArtistResponseDto responseDto = artistService.updateArtist(id, requestDto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Artist updated successfully!", responseDto));
     }
 }
