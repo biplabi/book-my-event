@@ -9,6 +9,7 @@ import type {
   CreateVenueRequest,
   EventStatus,
   ImageUploadTicket,
+  UpdateArtistRequest,
   Venue,
 } from '../types'
 
@@ -60,6 +61,11 @@ export const adminApi = {
 
   createArtist: (token: string, body: CreateArtistRequest) =>
     unwrap(apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/`, { method: 'POST', token, body })),
+
+  updateArtist: (token: string, id: number, body: UpdateArtistRequest) =>
+    unwrap(
+      apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/${id}`, { method: 'PUT', token, body }),
+    ),
 
   /**
    * Uploads an artist photo and returns its key for `createArtist`. event-service signs a

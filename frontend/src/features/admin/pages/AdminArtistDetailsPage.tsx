@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Pencil } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { Alert } from '@/components/ui/Alert'
+import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { eventPath, paths } from '@/config/routes'
 import { ArtistAvatar } from '@/features/events/components/ArtistAvatar'
@@ -13,6 +14,8 @@ import { useResource } from '@/hooks/useResource'
 import { ApiError } from '@/lib/api-client'
 import { adminApi } from '../api/admin.api'
 import { EmptyRow, TableShell, Th } from '../components/AdminPage'
+import { ArtistForm } from '../components/ArtistForm'
+import { Sheet } from '../components/Sheet'
 import { EventStatusBadge } from '../components/StatusBadge'
 import { describeAdminError } from '../utils/errors'
 
@@ -28,6 +31,8 @@ export function AdminArtistDetailsPage() {
   const artist = useResource(fetchArtist)
   // The API has no "events by artist" endpoint, so filter the full list client-side.
   const events = useResource(adminApi.listEvents)
+  const [editing, setEditing] = useState(false)
+  const closeEditor = useCallback(() => setEditing(false), [])
 
   const notFound =
     Number.isNaN(artistId) ||
@@ -55,16 +60,41 @@ export function AdminArtistDetailsPage() {
       ) : artist.status === 'error' ? (
         <Alert>{describeAdminError(artist.error)}</Alert>
       ) : (
-        <ArtistProfile
-          artist={artist.data}
-          events={events.status === 'success' ? events.data : null}
-        />
+        <>
+          <ArtistProfile
+            artist={artist.data}
+            events={events.status === 'success' ? events.data : null}
+            onEdit={() => setEditing(true)}
+          />
+          <Sheet
+            open={editing}
+            onClose={closeEditor}
+            title="Edit artist"
+            description={artist.data.stageName}
+          >
+            <ArtistForm
+              artist={artist.data}
+              onSaved={(updated) => {
+                artist.setData(() => updated)
+                closeEditor()
+              }}
+            />
+          </Sheet>
+        </>
       )}
     </>
   )
 }
 
-function ArtistProfile({ artist, events }: { artist: Artist; events: EventSummary[] | null }) {
+function ArtistProfile({
+  artist,
+  events,
+  onEdit,
+}: {
+  artist: Artist
+  events: EventSummary[] | null
+  onEdit: () => void
+}) {
   const theirs = useMemo(
     () =>
       (events ?? [])
@@ -106,6 +136,14 @@ function ArtistProfile({ artist, events }: { artist: Artist; events: EventSummar
             {artist.stageName}
           </h1>
         </div>
+        <Button
+          variant="secondary"
+          onClick={onEdit}
+          className="h-10 self-start px-4 text-sm sm:ml-auto sm:self-center"
+        >
+          <Pencil className="size-4" aria-hidden />
+          Edit
+        </Button>
       </motion.section>
 
       {artist.bio && (

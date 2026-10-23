@@ -34,6 +34,12 @@ export interface CreateArtistRequest {
   country?: string
 }
 
+/** Body of PUT /artist/{id}. Every field is replaced; the photo is kept unless changed. */
+export interface UpdateArtistRequest extends CreateArtistRequest {
+  /** Drop the current photo. Ignored when `imageKey` is set. */
+  removeImage?: boolean
+}
+
 /** Response of POST /artist/image-upload-url. */
 export interface ImageUploadTicket {
   /** Signed MinIO link; PUT the file here within a few minutes. */

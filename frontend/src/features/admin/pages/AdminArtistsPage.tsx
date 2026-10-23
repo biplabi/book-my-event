@@ -1,30 +1,16 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ImagePlus, Plus, X } from 'lucide-react'
-import { useCallback, useId, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { ArrowUpRight, Plus } from 'lucide-react'
+import { useCallback, useState } from 'react'
 import { Link } from 'react-router'
-import { toast } from 'sonner'
-import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
-import { TextAreaField } from '@/components/ui/TextAreaField'
-import { TextField } from '@/components/ui/TextField'
 import { adminArtistPath } from '@/config/routes'
-import { useAuth } from '@/features/auth/hooks/useAuth'
 import { ArtistAvatar } from '@/features/events/components/ArtistAvatar'
 import type { Artist } from '@/features/events/types'
 import { useResource } from '@/hooks/useResource'
-import { cn } from '@/lib/cn'
-import { adminApi, StorageUploadError } from '../api/admin.api'
+import { adminApi } from '../api/admin.api'
 import { AdminPageHeader, ResourceView } from '../components/AdminPage'
-import { describeAdminError } from '../utils/errors'
+import { ArtistForm } from '../components/ArtistForm'
 import { Sheet } from '../components/Sheet'
-import {
-  artistImageTypes,
-  artistSchema,
-  validateArtistImage,
-  type ArtistFormValues,
-} from '../schemas/admin.schemas'
 
 export function AdminArtistsPage() {
   const artists = useResource(adminApi.listArtists)
@@ -64,7 +50,7 @@ export function AdminArtistsPage() {
 
       <Sheet open={open} onClose={close} title="New artist" description="Who's performing?">
         <ArtistForm
-          onCreated={(artist) => {
+          onSaved={(artist) => {
             artists.setData((all) => [...all, artist])
             close()
           }}
@@ -104,153 +90,5 @@ function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
         className="pointer-events-none size-4 shrink-0 text-paper/30 transition-colors duration-300 group-hover:text-brand"
       />
     </motion.article>
-  )
-}
-
-function ArtistForm({ onCreated }: { onCreated: (artist: Artist) => void }) {
-  const { token } = useAuth()
-  const [formError, setFormError] = useState<string | null>(null)
-  // `preview` is a temporary browser URL for the picked file, shown before it's uploaded.
-  const [image, setImage] = useState<{ file: File; preview: string } | null>(null)
-  const [imageError, setImageError] = useState<string | null>(null)
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ArtistFormValues>({
-    resolver: zodResolver(artistSchema),
-    mode: 'onTouched',
-    defaultValues: { stageName: '', genre: '', country: '', bio: '' },
-  })
-
-  const pickImage = (file: File | null) => {
-    if (image) URL.revokeObjectURL(image.preview)
-    const problem = file && validateArtistImage(file)
-    setImageError(problem)
-    setImage(file && !problem ? { file, preview: URL.createObjectURL(file) } : null)
-  }
-
-  const onSubmit = handleSubmit(async (v) => {
-    if (!token) return
-    setFormError(null)
-    try {
-      // Upload first so the artist is only created once the photo is safely stored.
-      const imageKey = image ? await adminApi.uploadArtistImage(token, image.file) : undefined
-      const artist = await adminApi.createArtist(token, {
-        stageName: v.stageName.trim(),
-        genre: v.genre.trim(),
-        country: v.country || undefined,
-        imageKey,
-        bio: v.bio || undefined,
-      })
-      toast.success(`${artist.stageName} added.`)
-      onCreated(artist)
-    } catch (err) {
-      setFormError(err instanceof StorageUploadError ? err.message : describeAdminError(err))
-    }
-  })
-
-  return (
-    <form onSubmit={onSubmit} noValidate className="space-y-4">
-      {formError && <Alert>{formError}</Alert>}
-      <TextField
-        label="Stage name"
-        autoFocus
-        error={errors.stageName?.message}
-        {...register('stageName')}
-      />
-      <div className="grid grid-cols-2 gap-3">
-        <TextField label="Genre" error={errors.genre?.message} {...register('genre')} />
-        <TextField
-          label="Country (optional)"
-          error={errors.country?.message}
-          {...register('country')}
-        />
-      </div>
-      <PhotoPicker
-        file={image?.file ?? null}
-        preview={image?.preview ?? null}
-        error={imageError}
-        onChange={pickImage}
-      />
-      <TextAreaField label="Bio (optional)" error={errors.bio?.message} {...register('bio')} />
-      <Button type="submit" loading={isSubmitting} loadingText="Saving…" className="w-full">
-        Add artist
-      </Button>
-    </form>
-  )
-}
-
-/** Optional photo field with a round preview of the picked file. */
-function PhotoPicker({
-  file,
-  preview,
-  error,
-  onChange,
-}: {
-  file: File | null
-  preview: string | null
-  error: string | null
-  onChange: (file: File | null) => void
-}) {
-  const inputId = useId()
-
-  return (
-    <div>
-      <div
-        className={cn(
-          'flex items-center gap-4 rounded-xl border bg-paper/[0.025] p-3 transition-colors duration-200 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-brand/70',
-          error ? 'border-signal/60' : 'border-paper/12 hover:border-paper/25',
-        )}
-      >
-        {preview ? (
-          <img src={preview} alt="" className="size-14 shrink-0 rounded-full object-cover" />
-        ) : (
-          <span
-            aria-hidden
-            className="grid size-14 shrink-0 place-items-center rounded-full border border-dashed border-paper/20 text-paper/40"
-          >
-            <ImagePlus className="size-5" />
-          </span>
-        )}
-        <div className="min-w-0 flex-1">
-          <label
-            htmlFor={inputId}
-            className="cursor-pointer text-[15px] text-paper transition-colors hover:text-brand"
-          >
-            {file ? 'Change photo' : 'Add photo (optional)'}
-          </label>
-          <p className="truncate text-[13px] text-paper/45">
-            {file ? file.name : 'JPEG, PNG or WebP, up to 5 MB'}
-          </p>
-        </div>
-        {file && (
-          <button
-            type="button"
-            onClick={() => onChange(null)}
-            aria-label="Remove photo"
-            className="rounded-lg p-2 text-paper/45 transition-colors hover:bg-paper/5 hover:text-paper"
-          >
-            <X className="size-4" aria-hidden />
-          </button>
-        )}
-        <input
-          id={inputId}
-          type="file"
-          accept={artistImageTypes.join(',')}
-          className="sr-only"
-          onChange={(e) => {
-            onChange(e.target.files?.[0] ?? null)
-            // Reset so picking the same file again still fires onChange.
-            e.target.value = ''
-          }}
-        />
-      </div>
-      {error && (
-        <p role="alert" className="pt-1.5 pl-1 text-[13px] text-signal">
-          {error}
-        </p>
-      )}
-    </div>
   )
 }
