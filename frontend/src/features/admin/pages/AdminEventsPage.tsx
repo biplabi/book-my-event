@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
-import { paths } from '@/config/routes'
+import { eventPath, paths } from '@/config/routes'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import type { EventSummary } from '@/features/events/types'
 import { categories } from '@/features/events/utils/categories'
@@ -164,10 +164,16 @@ function EventsTable({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: Math.min(i, 10) * 0.03 }}
-                className="border-b border-paper/[0.06] last:border-0 hover:bg-paper/[0.02]"
+                className="group relative border-b border-paper/[0.06] last:border-0 hover:bg-paper/[0.03]"
               >
                 <td className="px-4 py-3.5">
-                  <p className="font-medium text-paper">{event.name}</p>
+                  {/* Stretched link: the whole row opens the event page. */}
+                  <Link
+                    to={eventPath(event.id)}
+                    className="font-medium text-paper outline-none group-hover:text-brand after:absolute after:inset-0 after:content-[''] focus-visible:underline"
+                  >
+                    {event.name}
+                  </Link>
                   <p className="mt-0.5 inline-flex items-center gap-1.5 label-mono text-paper/40">
                     {Icon && <Icon className="size-3" aria-hidden />}
                     {categories[event.eventCategory]?.name ?? event.eventCategory}
@@ -197,7 +203,8 @@ function EventsTable({
                   {price === null ? '—' : price === 0 ? 'Free' : formatPrice(price)}
                 </td>
                 <td className="px-4 py-3.5">
-                  <div className="flex justify-end gap-1.5">
+                  {/* Above the row link so the buttons still get their own clicks. */}
+                  <div className="relative z-10 flex justify-end gap-1.5">
                     {event.status === 'DRAFT' && (
                       <ConfirmButton
                         instant
