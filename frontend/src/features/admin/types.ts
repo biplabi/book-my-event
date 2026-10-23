@@ -34,8 +34,11 @@ export interface CreateArtistRequest {
   country?: string
 }
 
-/** Body of PUT /artist/{id}. Every field is replaced; the photo is kept unless changed. */
-export interface UpdateArtistRequest extends CreateArtistRequest {
+/**
+ * Body of PUT /artist/{id}. Fields left out keep their current value;
+ * send `''` for `bio` or `country` to clear it.
+ */
+export interface UpdateArtistRequest extends Partial<CreateArtistRequest> {
   /** Drop the current photo. Ignored when `imageKey` is set. */
   removeImage?: boolean
 }

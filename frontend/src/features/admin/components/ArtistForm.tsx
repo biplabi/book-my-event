@@ -72,16 +72,20 @@ export function ArtistForm({ artist, onSaved }: ArtistFormProps) {
     try {
       // Upload first so the artist is only saved once the photo is safely stored.
       const imageKey = image ? await adminApi.uploadArtistImage(token, image.file) : undefined
-      const details = {
-        stageName: v.stageName.trim(),
-        genre: v.genre.trim(),
-        country: v.country || undefined,
-        bio: v.bio || undefined,
-        imageKey,
-      }
+      const common = { stageName: v.stageName.trim(), genre: v.genre.trim(), imageKey }
       const saved = artist
-        ? await adminApi.updateArtist(token, artist.id, { ...details, removeImage: removeCurrent })
-        : await adminApi.createArtist(token, details)
+        ? // The update keeps any field left out, so send "" to clear an emptied bio or country.
+          await adminApi.updateArtist(token, artist.id, {
+            ...common,
+            country: v.country,
+            bio: v.bio,
+            removeImage: removeCurrent,
+          })
+        : await adminApi.createArtist(token, {
+            ...common,
+            country: v.country || undefined,
+            bio: v.bio || undefined,
+          })
       toast.success(artist ? `${saved.stageName} updated.` : `${saved.stageName} added.`)
       onSaved(saved)
     } catch (err) {
