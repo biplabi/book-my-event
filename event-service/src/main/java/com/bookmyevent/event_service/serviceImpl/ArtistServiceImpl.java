@@ -5,9 +5,11 @@ import com.bookmyevent.event_service.exception.DuplicateResourceException;
 import com.bookmyevent.event_service.exception.ResourceNotFoundException;
 import com.bookmyevent.event_service.repository.ArtistRepository;
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
+import com.bookmyevent.event_service.requestDto.UpdateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
 import com.bookmyevent.event_service.service.ImageStorageService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,45 @@ public class ArtistServiceImpl implements ArtistService {
        Artist artist = artistOptional.orElseThrow(() ->
                new ResourceNotFoundException("Artist not found with id: " + id + "!"));
        return toResponseDto(artist);
+    }
+
+    @Override
+    @Transactional
+    public ArtistResponseDto updateArtist(Long id, UpdateArtistRequestDto requestDto) {
+        Artist artist = artistRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Artist not found with id: " + id + "!"));
+
+        // Fields that weren't sent (null) keep their current value, so nothing is erased by accident.
+        if(requestDto.getStageName() != null) {
+            // Renaming is fine, but not onto another artist's stage name.
+            artistRepository.findByStageName(requestDto.getStageName())
+                    .filter(other -> !other.getId().equals(id))
+                    .ifPresent(other -> {
+                        throw new DuplicateResourceException("Another artist already uses this stage name!");
+                    });
+            artist.setStageName(requestDto.getStageName());
+        }
+        if(requestDto.getGenre() != null) {
+            artist.setGenre(requestDto.getGenre());
+        }
+        // Optional fields: an explicit "" clears them.
+        if(requestDto.getBio() != null) {
+            artist.setBio(blankToNull(requestDto.getBio()));
+        }
+        if(requestDto.getCountry() != null) {
+            artist.setCountry(blankToNull(requestDto.getCountry()));
+        }
+        if(requestDto.getImageKey() != null) {
+            artist.setImageKey(requestDto.getImageKey());
+        } else if(requestDto.isRemoveImage()) {
+            artist.setImageKey(null);
+        }
+
+        return toResponseDto(artistRepository.save(artist));
+    }
+
+    private String blankToNull(String value) {
+        return value.isBlank() ? null : value;
     }
 
     @Override
