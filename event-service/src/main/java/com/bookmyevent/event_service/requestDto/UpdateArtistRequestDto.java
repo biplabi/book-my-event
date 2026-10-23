@@ -1,15 +1,18 @@
 package com.bookmyevent.event_service.requestDto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Every field is optional: a field that isn't sent (or is null) keeps its current value.
+ * Send "" for bio or country to clear it.
+ */
 @Data
 public class UpdateArtistRequestDto {
-    @NotBlank(message = "Stage name is required!")
+    @Pattern(regexp = ".*\\S.*", message = "Stage name can't be blank!")
     private String stageName;
-    @NotBlank(message = "Genre is required!")
+    @Pattern(regexp = ".*\\S.*", message = "Genre can't be blank!")
     private String genre;
     @Size(max = 1000, message = "The bio must be at most 1000 characters!")
     private String bio;

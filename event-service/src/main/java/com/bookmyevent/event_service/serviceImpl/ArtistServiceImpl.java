@@ -62,17 +62,26 @@ public class ArtistServiceImpl implements ArtistService {
         Artist artist = artistRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Artist not found with id: " + id + "!"));
 
-        // Renaming is fine, but not onto another artist's stage name.
-        artistRepository.findByStageName(requestDto.getStageName())
-                .filter(other -> !other.getId().equals(id))
-                .ifPresent(other -> {
-                    throw new DuplicateResourceException("Another artist already uses this stage name!");
-                });
-
-        artist.setStageName(requestDto.getStageName());
-        artist.setGenre(requestDto.getGenre());
-        artist.setBio(requestDto.getBio());
-        artist.setCountry(requestDto.getCountry());
+        // Fields that weren't sent (null) keep their current value, so nothing is erased by accident.
+        if(requestDto.getStageName() != null) {
+            // Renaming is fine, but not onto another artist's stage name.
+            artistRepository.findByStageName(requestDto.getStageName())
+                    .filter(other -> !other.getId().equals(id))
+                    .ifPresent(other -> {
+                        throw new DuplicateResourceException("Another artist already uses this stage name!");
+                    });
+            artist.setStageName(requestDto.getStageName());
+        }
+        if(requestDto.getGenre() != null) {
+            artist.setGenre(requestDto.getGenre());
+        }
+        // Optional fields: an explicit "" clears them.
+        if(requestDto.getBio() != null) {
+            artist.setBio(blankToNull(requestDto.getBio()));
+        }
+        if(requestDto.getCountry() != null) {
+            artist.setCountry(blankToNull(requestDto.getCountry()));
+        }
         if(requestDto.getImageKey() != null) {
             artist.setImageKey(requestDto.getImageKey());
         } else if(requestDto.isRemoveImage()) {
@@ -80,6 +89,10 @@ public class ArtistServiceImpl implements ArtistService {
         }
 
         return toResponseDto(artistRepository.save(artist));
+    }
+
+    private String blankToNull(String value) {
+        return value.isBlank() ? null : value;
     }
 
     @Override
