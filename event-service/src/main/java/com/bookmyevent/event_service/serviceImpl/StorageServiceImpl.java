@@ -1,8 +1,9 @@
 package com.bookmyevent.event_service.serviceImpl;
 
+import com.bookmyevent.event_service.enums.MediaFolder;
 import com.bookmyevent.event_service.requestDto.ImageUploadRequestDto;
 import com.bookmyevent.event_service.responseDto.ImageUploadResponseDto;
-import com.bookmyevent.event_service.service.ImageStorageService;
+import com.bookmyevent.event_service.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Service
-public class ImageStorageServiceImpl implements ImageStorageService {
+public class StorageServiceImpl implements StorageService {
 
     private static final Duration UPLOAD_LINK_VALIDITY = Duration.ofMinutes(5);
 
@@ -26,10 +27,10 @@ public class ImageStorageServiceImpl implements ImageStorageService {
     private String publicBaseUrl;
 
     @Override
-    public ImageUploadResponseDto createArtistImageUpload(ImageUploadRequestDto requestDto) {
+    public ImageUploadResponseDto createImageUpload(MediaFolder folder, ImageUploadRequestDto requestDto) {
         // "image/png" -> "png". The server picks the name so uploads can't overwrite each other.
         String extension = requestDto.getContentType().substring("image/".length());
-        String key = "artists/" + UUID.randomUUID() + "." + extension;
+        String key = folder.getPath() + "/" + UUID.randomUUID() + "." + extension;
 
         // Content type and length are part of the signature, so MinIO rejects
         // any upload whose type or size differs from what was validated here.
@@ -48,7 +49,7 @@ public class ImageStorageServiceImpl implements ImageStorageService {
     }
 
     @Override
-    public String toPublicUrl(String imageKey) {
-        return imageKey == null ? null : publicBaseUrl + "/" + imageKey;
+    public String toPublicUrl(String key) {
+        return key == null ? null : publicBaseUrl + "/" + key;
     }
 }

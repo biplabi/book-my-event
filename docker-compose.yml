@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
 
-  # File storage for artist photos (S3-compatible). Console: http://localhost:9001
+  # File storage shared by all services (S3-compatible). Console: http://localhost:9001
   minio:
     image: minio/minio
     container_name: minio
@@ -36,8 +36,11 @@ services:
       timeout: 5s
       retries: 10
 
-  # Runs once: creates the bucket, makes artists/ publicly readable and
-  # creates an upload-only user for event-service, then exits.
+  # Runs once, then exits. Sets up storage for every service:
+  #   bookmyevent-media   public: anyone can view files by URL (artist, event, venue, user photos)
+  #   bookmyevent-private private: only reachable through short-lived signed links (tickets, receipts)
+  # Each service gets its own MinIO user ("<service>" / "<service>-secret") limited to its own
+  # folders by minio/policies/<service>.json. To add a service, add its policy file and name below.
   minio-init:
     image: minio/mc
     container_name: minio_init
@@ -48,12 +51,15 @@ services:
       - ./minio/policies:/policies:ro
     entrypoint: >
       /bin/sh -c "
-      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
-      mc mb --ignore-existing local/bookmyevent-media &&
-      mc anonymous set download local/bookmyevent-media/artists &&
-      mc admin user add local event-service event-service-secret &&
-      mc admin policy create local artist-upload /policies/artist-upload.json &&
-      (mc admin policy attach local artist-upload --user event-service || true)
+      set -e;
+      mc alias set local http://minio:9000 minioadmin minioadmin123;
+      mc mb --ignore-existing local/bookmyevent-media local/bookmyevent-private;
+      mc anonymous set download local/bookmyevent-media;
+      for svc in event-service user-service booking-service payment-service; do
+        mc admin user add local $$svc $$svc-secret;
+        mc admin policy create local $$svc /policies/$$svc.json;
+        mc admin policy attach local $$svc --user $$svc || true;
+      done
       "
 
   #-------------------Services------------------------
