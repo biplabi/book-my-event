@@ -13,8 +13,9 @@ import type {
   Venue,
 } from '../types'
 
-// Paths go through the dev-server proxies (see vite.config.ts). event-service maps its
-// collections with a trailing slash (`/event/`), booking-service without (`/booking`).
+// Paths go through the dev-server proxies (see vite.config.ts). Admin actions live under
+// each service's `/admin/**`; artist profiles are the same for everyone, so they're read
+// from the public `/artists` endpoints.
 const EVENTS = '/event-service'
 const BOOKINGS = '/booking-service'
 
@@ -29,21 +30,27 @@ async function unwrap<T>(request: Promise<ApiResponse<T>>) {
 
 // Each function is module-level so it's a stable `useResource` fetcher.
 export const adminApi = {
-  /** For admins, event-service returns events of every status. */
+  /** Every status, drafts included. */
   listEvents: (token: string, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<EventSummary[]>>(`${EVENTS}/event/`, { token, signal })),
+    unwrap(apiRequest<ApiResponse<EventSummary[]>>(`${EVENTS}/admin/events`, { token, signal })),
 
   getEvent: (token: string, id: number, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/event/${id}`, { token, signal })),
+    unwrap(
+      apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/admin/events/${id}`, { token, signal }),
+    ),
 
   createEvent: (token: string, body: CreateEventRequest) =>
     unwrap(
-      apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/event/`, { method: 'POST', token, body }),
+      apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/admin/events`, {
+        method: 'POST',
+        token,
+        body,
+      }),
     ),
 
   updateEventStatus: (token: string, id: number, status: EventStatus) =>
     unwrap(
-      apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/event/${id}/status`, {
+      apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/admin/events/${id}/status`, {
         method: 'PATCH',
         token,
         body: { status },
@@ -51,23 +58,31 @@ export const adminApi = {
     ),
 
   listVenues: (token: string, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<Venue[]>>(`${EVENTS}/venue/`, { token, signal })),
+    unwrap(apiRequest<ApiResponse<Venue[]>>(`${EVENTS}/admin/venues`, { token, signal })),
 
   createVenue: (token: string, body: CreateVenueRequest) =>
-    unwrap(apiRequest<ApiResponse<Venue>>(`${EVENTS}/venue/`, { method: 'POST', token, body })),
+    unwrap(
+      apiRequest<ApiResponse<Venue>>(`${EVENTS}/admin/venues`, { method: 'POST', token, body }),
+    ),
 
   listArtists: (token: string, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<Artist[]>>(`${EVENTS}/artist/`, { token, signal })),
+    unwrap(apiRequest<ApiResponse<Artist[]>>(`${EVENTS}/artists`, { token, signal })),
 
   getArtist: (token: string, id: number, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/${id}`, { token, signal })),
+    unwrap(apiRequest<ApiResponse<Artist>>(`${EVENTS}/artists/${id}`, { token, signal })),
 
   createArtist: (token: string, body: CreateArtistRequest) =>
-    unwrap(apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/`, { method: 'POST', token, body })),
+    unwrap(
+      apiRequest<ApiResponse<Artist>>(`${EVENTS}/admin/artists`, { method: 'POST', token, body }),
+    ),
 
   updateArtist: (token: string, id: number, body: UpdateArtistRequest) =>
     unwrap(
-      apiRequest<ApiResponse<Artist>>(`${EVENTS}/artist/${id}`, { method: 'PUT', token, body }),
+      apiRequest<ApiResponse<Artist>>(`${EVENTS}/admin/artists/${id}`, {
+        method: 'PUT',
+        token,
+        body,
+      }),
     ),
 
   /**
@@ -76,7 +91,7 @@ export const adminApi = {
    */
   uploadArtistImage: async (token: string, file: File) => {
     const ticket = await unwrap(
-      apiRequest<ApiResponse<ImageUploadTicket>>(`${EVENTS}/artist/image-upload-url`, {
+      apiRequest<ApiResponse<ImageUploadTicket>>(`${EVENTS}/admin/artists/image-upload-url`, {
         method: 'POST',
         token,
         body: { contentType: file.type, sizeBytes: file.size },
@@ -101,7 +116,7 @@ export const adminApi = {
   },
 
   listBookings: (token: string, signal?: AbortSignal) =>
-    unwrap(apiRequest<ApiResponse<Booking[]>>(`${BOOKINGS}/booking`, { token, signal })),
+    unwrap(apiRequest<ApiResponse<Booking[]>>(`${BOOKINGS}/admin/bookings`, { token, signal })),
 
   listUsers: (token: string, signal?: AbortSignal) =>
     unwrap(apiRequest<ApiResponse<UserProfile[]>>('/api/admin/users', { token, signal })),

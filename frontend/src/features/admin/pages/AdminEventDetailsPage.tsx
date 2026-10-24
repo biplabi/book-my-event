@@ -116,13 +116,16 @@ function EventOverview({
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <EventStatusActions event={event} onUpdated={onUpdated} />
-          <Link
-            to={eventPath(event.id)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-paper/60 transition-colors hover:bg-paper/[0.06] hover:text-paper"
-          >
-            Public page
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </Link>
+          {/* Only published events have a public page; for anything else it would 404. */}
+          {event.status === 'PUBLISHED' && (
+            <Link
+              to={eventPath(event.id)}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-paper/60 transition-colors hover:bg-paper/[0.06] hover:text-paper"
+            >
+              Public page
+              <ArrowUpRight className="size-3.5" aria-hidden />
+            </Link>
+          )}
         </div>
       </motion.section>
 
