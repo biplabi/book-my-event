@@ -1,51 +1,33 @@
 package com.bookmyevent.event_service.controller;
 
-import com.bookmyevent.event_service.requestDto.CreateEventRequestDto;
-import com.bookmyevent.event_service.requestDto.UpdateEventStatusRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
 import com.bookmyevent.event_service.responseDto.EventResponseDto;
 import com.bookmyevent.event_service.service.EventService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/** What users can see. Admin actions live in AdminEventController. */
 @RestController
-@RequestMapping("/event")
+@RequestMapping("/events")
 public class EventController {
 
     @Autowired
     private EventService eventService;
 
-    @PostMapping("/")
-    public ResponseEntity<ApiResponse<EventResponseDto>> createEvent(@RequestBody @Valid CreateEventRequestDto requestDto) {
-        EventResponseDto responseDto = eventService.createEvent(requestDto);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Event created successfully!", responseDto));
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<EventResponseDto>>> getAllEvents(Authentication authentication) {
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
-        List<EventResponseDto> eventList = eventService.getAllEvents(isAdmin);
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<EventResponseDto>>> getAllEvents() {
+        List<EventResponseDto> eventList = eventService.getPublishedEvents();
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Events fetched successfully!", eventList));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<EventResponseDto>> getEventById(@PathVariable Long id) {
-        EventResponseDto responseDto = eventService.getEventById(id);
+        EventResponseDto responseDto = eventService.getPublishedEventById(id);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "Event fetched with is: " + id, responseDto));
-    }
-
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResponse<EventResponseDto>> updateEventStatus(@PathVariable Long id, @RequestBody @Valid UpdateEventStatusRequestDto requestDto) {
-        EventResponseDto responseDto = eventService.updateEventStatus(id, requestDto.getStatus());
-
-        return ResponseEntity.ok(new ApiResponse<>(true, "Event status updated to " + requestDto.getStatus(), responseDto));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Event fetched with id: " + id, responseDto));
     }
 }

@@ -1,4 +1,4 @@
-package com.bookmyevent.event_service.controller;
+package com.bookmyevent.event_service.controller.admin;
 
 import com.bookmyevent.event_service.requestDto.CreateVenueRequestDto;
 import com.bookmyevent.event_service.responseDto.ApiResponse;
@@ -11,20 +11,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/** Only admins work with venues; users see the venue inside each event. */
 @RestController
-@RequestMapping("/venue")
-public class VenueController {
+@RequestMapping("/admin/venues")
+public class AdminVenueController {
 
     @Autowired
     private VenueService venueService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ApiResponse<VenueResponseDto>> createVenue(@RequestBody @Valid CreateVenueRequestDto requestDto) {
         VenueResponseDto responseDto = venueService.createVenue(requestDto);
         return ResponseEntity.ok(new ApiResponse<>(true, "Venue created successfully!", responseDto));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<VenueResponseDto>>> getAllVenue() {
         List<VenueResponseDto> venueList = venueService.getAllVenue();
         return ResponseEntity.ok(new ApiResponse<>(true, "Venues fetched successfully!", venueList));

@@ -1,0 +1,48 @@
+package com.bookmyevent.event_service.controller.admin;
+
+import com.bookmyevent.event_service.requestDto.CreateEventRequestDto;
+import com.bookmyevent.event_service.requestDto.UpdateEventStatusRequestDto;
+import com.bookmyevent.event_service.responseDto.ApiResponse;
+import com.bookmyevent.event_service.responseDto.EventResponseDto;
+import com.bookmyevent.event_service.service.EventService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin/events")
+public class AdminEventController {
+
+    @Autowired
+    private EventService eventService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<EventResponseDto>> createEvent(@RequestBody @Valid CreateEventRequestDto requestDto) {
+        EventResponseDto responseDto = eventService.createEvent(requestDto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Event created successfully!", responseDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<EventResponseDto>>> getAllEvents() {
+        List<EventResponseDto> eventList = eventService.getAllEvents();
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Events fetched successfully!", eventList));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EventResponseDto>> getEventById(@PathVariable Long id) {
+        EventResponseDto responseDto = eventService.getEventById(id);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Event fetched with id: " + id, responseDto));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<EventResponseDto>> updateEventStatus(@PathVariable Long id, @RequestBody @Valid UpdateEventStatusRequestDto requestDto) {
+        EventResponseDto responseDto = eventService.updateEventStatus(id, requestDto.getStatus());
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "Event status updated to " + requestDto.getStatus(), responseDto));
+    }
+}
