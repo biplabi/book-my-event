@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { toast } from 'sonner'
 import { eventPath, paths } from '@/config/routes'
 import { useAuth } from '@/features/auth/hooks/useAuth'
@@ -9,6 +9,7 @@ import type { EventSummary } from '@/features/events/types'
 import { categories } from '@/features/events/utils/categories'
 import { formatEventDate, formatPrice, lowestPrice } from '@/features/events/utils/format'
 import { useResource } from '@/hooks/useResource'
+import { backTo } from '@/lib/back-link'
 import { cn } from '@/lib/cn'
 import { adminApi } from '../api/admin.api'
 import { AdminPageHeader, EmptyRow, ResourceView, TableShell, Th } from '../components/AdminPage'
@@ -76,6 +77,7 @@ function EventsTable({
   onUpdated: (e: EventSummary) => void
 }) {
   const { token } = useAuth()
+  const location = useLocation()
 
   const counts = useMemo(() => {
     const c: Record<Filter, number> = {
@@ -170,6 +172,7 @@ function EventsTable({
                   {/* Stretched link: the whole row opens the event page. */}
                   <Link
                     to={eventPath(event.id)}
+                    state={backTo(location, 'Admin events')}
                     className="font-medium text-paper outline-none group-hover:text-brand after:absolute after:inset-0 after:content-[''] focus-visible:underline"
                   >
                     {event.name}

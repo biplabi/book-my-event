@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight, Pencil } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
@@ -12,6 +12,7 @@ import { categories } from '@/features/events/utils/categories'
 import { formatEventDate } from '@/features/events/utils/format'
 import { useResource } from '@/hooks/useResource'
 import { ApiError } from '@/lib/api-client'
+import { backTo } from '@/lib/back-link'
 import { adminApi } from '../api/admin.api'
 import { EmptyRow, TableShell, Th } from '../components/AdminPage'
 import { ArtistForm } from '../components/ArtistForm'
@@ -95,6 +96,7 @@ function ArtistProfile({
   events: EventSummary[] | null
   onEdit: () => void
 }) {
+  const location = useLocation()
   const theirs = useMemo(
     () =>
       (events ?? [])
@@ -215,6 +217,7 @@ function ArtistProfile({
                       {/* Stretched link: the whole row opens the event page. */}
                       <Link
                         to={eventPath(event.id)}
+                        state={backTo(location, artist.stageName)}
                         className="font-medium text-paper outline-none after:absolute after:inset-0 after:content-[''] focus-visible:underline"
                       >
                         {event.name}

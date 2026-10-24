@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, CalendarDays, Clock3, MapPin } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useCallback, useEffect, type ReactNode } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { Backdrop } from '@/components/layout/Backdrop'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { Alert } from '@/components/ui/Alert'
@@ -17,6 +17,7 @@ import { categories } from '@/features/events/utils/categories'
 import { formatPrice, lowestPrice, seatsLeft } from '@/features/events/utils/format'
 import { useResource } from '@/hooks/useResource'
 import { ApiError } from '@/lib/api-client'
+import { readBackLink } from '@/lib/back-link'
 import { cn } from '@/lib/cn'
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -61,6 +62,8 @@ export function EventDetailsPage() {
     [eventId],
   )
   const event = useResource(fetchEvent)
+  // Pages that link here (e.g. the admin tables) can say where "back" should go.
+  const back = readBackLink(useLocation().state, { to: paths.home, label: 'All events' })
 
   // Block body on purpose: scrollTo can return a Promise, and an effect must only return a cleanup.
   useEffect(() => {
@@ -87,11 +90,11 @@ export function EventDetailsPage() {
 
       <main className="mx-auto max-w-screen-2xl px-4 pt-6 pb-20 sm:px-8 lg:px-12 xl:px-16">
         <Link
-          to={paths.home}
+          to={back.to}
           className="inline-flex items-center gap-1.5 text-sm text-paper/50 transition hover:text-paper"
         >
           <ArrowLeft className="size-4" aria-hidden />
-          All events
+          {back.label}
         </Link>
 
         <div className="mt-6">

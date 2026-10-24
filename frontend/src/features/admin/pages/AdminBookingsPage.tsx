@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { eventPath } from '@/config/routes'
 import type { UserProfile } from '@/features/auth/types'
 import type { EventSummary } from '@/features/events/types'
 import { formatPrice } from '@/features/events/utils/format'
 import { useResource } from '@/hooks/useResource'
+import { backTo } from '@/lib/back-link'
 import { adminApi } from '../api/admin.api'
 import { AdminPageHeader, EmptyRow, ResourceView, TableShell, Th } from '../components/AdminPage'
 import { BookingStatusBadge } from '../components/StatusBadge'
@@ -55,6 +56,7 @@ function BookingsView({
   events: EventSummary[]
   users: UserProfile[]
 }) {
+  const location = useLocation()
   const eventName = useMemo(() => new Map(events.map((e) => [e.id, e.name])), [events])
   const userById = useMemo(() => new Map(users.map((u) => [u.id, u])), [users])
 
@@ -127,6 +129,7 @@ function BookingsView({
                 <td className="px-4 py-3.5 font-medium text-paper">
                   <Link
                     to={eventPath(b.eventId)}
+                    state={backTo(location, 'Bookings')}
                     className="underline-offset-4 transition-colors hover:text-brand hover:underline focus-visible:underline focus-visible:outline-none"
                   >
                     {eventName.get(b.eventId) ?? `Event #${b.eventId}`}
