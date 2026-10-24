@@ -8,8 +8,6 @@ import { SiteHeader } from '@/components/layout/SiteHeader'
 import { Alert } from '@/components/ui/Alert'
 import { Spinner } from '@/components/ui/Spinner'
 import { paths } from '@/config/routes'
-import { EventStatusBadge } from '@/features/admin/components/StatusBadge'
-import { useAuth } from '@/features/auth/hooks/useAuth'
 import { eventsApi } from '@/features/events/api/events.api'
 import { ArtistAvatar } from '@/features/events/components/ArtistAvatar'
 import type { Artist, EventSummary, TicketType } from '@/features/events/types'
@@ -55,7 +53,6 @@ function duration(start: Date, end: Date) {
 export function EventDetailsPage() {
   const { id } = useParams()
   const eventId = Number(id)
-  const { user } = useAuth()
   const fetchEvent = useCallback(
     (token: string, signal: AbortSignal) => eventsApi.get(token, eventId, signal),
     [eventId],
@@ -67,21 +64,16 @@ export function EventDetailsPage() {
     window.scrollTo(0, 0)
   }, [eventId])
 
-  const isAdmin = user?.role === 'ROLE_ADMIN'
-  // Customers only ever see published events; admins can preview drafts here too.
-  const hidden = event.status === 'success' && event.data.status !== 'PUBLISHED' && !isAdmin
+  // The public endpoint answers 404 for drafts too, so they land here like a missing event.
   const notFound =
     Number.isNaN(eventId) ||
-    hidden ||
     (event.status === 'error' && event.error instanceof ApiError && event.error.status === 404)
 
   return (
     <div className="relative min-h-dvh">
       <Backdrop />
       <title>
-        {event.status === 'success' && !hidden
-          ? `${event.data.name} · BookMyEvent`
-          : 'Event · BookMyEvent'}
+        {event.status === 'success' ? `${event.data.name} · BookMyEvent` : 'Event · BookMyEvent'}
       </title>
       <SiteHeader />
 
@@ -104,7 +96,7 @@ export function EventDetailsPage() {
           ) : event.status === 'error' ? (
             <Alert>We couldn&apos;t load this event. Please try again.</Alert>
           ) : (
-            <EventDetails event={event.data} showStatus={isAdmin} />
+            <EventDetails event={event.data} />
           )}
         </div>
       </main>
@@ -112,7 +104,7 @@ export function EventDetailsPage() {
   )
 }
 
-function EventDetails({ event, showStatus }: { event: EventSummary; showStatus: boolean }) {
+function EventDetails({ event }: { event: EventSummary }) {
   const category = categories[event.eventCategory]
   const CategoryIcon = category.icon
   const start = new Date(event.startDateTime)
@@ -130,7 +122,6 @@ function EventDetails({ event, showStatus }: { event: EventSummary; showStatus: 
             <CategoryIcon className="size-3.5" aria-hidden />
             {category.name}
           </span>
-          {showStatus && event.status !== 'PUBLISHED' && <EventStatusBadge status={event.status} />}
         </motion.div>
 
         <div className="mt-5 flex items-start gap-5 sm:gap-7">
