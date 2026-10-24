@@ -17,6 +17,8 @@ public class EventResponseDto {
     private List<ArtistResponseDto> artists;
     private List<TicketTypeResponseDto> ticketTypes;
     private String eventCategory;
+    private VenueResponseDto venue;
+    /** Same as venue.address.city; kept so existing clients don't break. */
     private String city;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;

@@ -19,6 +19,7 @@ import com.bookmyevent.event_service.responseDto.EventResponseDto;
 import com.bookmyevent.event_service.responseDto.TicketTypeResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
 import com.bookmyevent.event_service.service.EventService;
+import com.bookmyevent.event_service.service.VenueService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class EventServiceImpl implements EventService {
     private ArtistRepository artistRepository;
     @Autowired
     private ArtistService artistService;
+    @Autowired
+    private VenueService venueService;
 
     @Override
     @Transactional
@@ -175,6 +178,7 @@ public class EventServiceImpl implements EventService {
                 .artists(artistResponses)
                 .ticketTypes(ticketTypeResponses)
                 .eventCategory(event.getEventCategory() != null ? event.getEventCategory().name() : null)
+                .venue(event.getVenue() != null ? venueService.toResponseDto(event.getVenue()) : null)
                 .city(city)
                 .startDateTime(event.getStartDateTime())
                 .endDateTime(event.getEndDateTime())
