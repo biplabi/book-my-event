@@ -7,6 +7,7 @@ export const paths = {
   admin: '/admin',
   adminEvents: '/admin/events',
   adminNewEvent: '/admin/events/new',
+  adminEvent: '/admin/events/:id',
   adminVenues: '/admin/venues',
   adminArtists: '/admin/artists',
   adminArtist: '/admin/artists/:id',
@@ -15,4 +16,5 @@ export const paths = {
 } as const
 
 export const eventPath = (id: number | string) => `/events/${id}`
+export const adminEventPath = (id: number | string) => `/admin/events/${id}`
 export const adminArtistPath = (id: number | string) => `/admin/artists/${id}`

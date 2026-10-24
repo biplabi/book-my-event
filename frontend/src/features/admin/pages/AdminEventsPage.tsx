@@ -2,9 +2,7 @@ import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { toast } from 'sonner'
-import { eventPath, paths } from '@/config/routes'
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { adminEventPath, paths } from '@/config/routes'
 import type { EventSummary } from '@/features/events/types'
 import { categories } from '@/features/events/utils/categories'
 import { formatEventDate, formatPrice, lowestPrice } from '@/features/events/utils/format'
@@ -12,8 +10,7 @@ import { useResource } from '@/hooks/useResource'
 import { cn } from '@/lib/cn'
 import { adminApi } from '../api/admin.api'
 import { AdminPageHeader, EmptyRow, ResourceView, TableShell, Th } from '../components/AdminPage'
-import { describeAdminError } from '../utils/errors'
-import { ConfirmButton } from '../components/ConfirmButton'
+import { EventStatusActions } from '../components/EventStatusActions'
 import { EventStatusBadge } from '../components/StatusBadge'
 import type { EventStatus } from '../types'
 
@@ -75,8 +72,6 @@ function EventsTable({
   onFilter: (f: Filter) => void
   onUpdated: (e: EventSummary) => void
 }) {
-  const { token } = useAuth()
-
   const counts = useMemo(() => {
     const c: Record<Filter, number> = {
       ALL: events.length,
@@ -96,16 +91,6 @@ function EventsTable({
         .sort((a, b) => a.startDateTime.localeCompare(b.startDateTime)),
     [events, filter],
   )
-
-  const setStatus = async (event: EventSummary, status: EventStatus, verb: string) => {
-    if (!token) return
-    try {
-      onUpdated(await adminApi.updateEventStatus(token, event.id, status))
-      toast.success(`${event.name} ${verb}.`)
-    } catch (err) {
-      toast.error(describeAdminError(err))
-    }
-  }
 
   return (
     <>
@@ -139,7 +124,7 @@ function EventsTable({
           <tr>
             <Th>Event</Th>
             <Th>When</Th>
-            <Th>City</Th>
+            <Th>Venue</Th>
             <Th>Status</Th>
             <Th>Seats sold</Th>
             <Th>From</Th>
@@ -167,9 +152,9 @@ function EventsTable({
                 className="group relative border-b border-paper/[0.06] last:border-0 hover:bg-paper/[0.03]"
               >
                 <td className="px-4 py-3.5">
-                  {/* Stretched link: the whole row opens the event page. */}
+                  {/* Stretched link: the whole row opens the admin event page. */}
                   <Link
-                    to={eventPath(event.id)}
+                    to={adminEventPath(event.id)}
                     className="font-medium text-paper outline-none group-hover:text-brand after:absolute after:inset-0 after:content-[''] focus-visible:underline"
                   >
                     {event.name}
@@ -182,7 +167,18 @@ function EventsTable({
                 <td className="px-4 py-3.5 whitespace-nowrap text-paper/70">
                   {when ? `${when.day} ${when.month} · ${when.time}` : '—'}
                 </td>
-                <td className="px-4 py-3.5 text-paper/70">{event.city ?? '—'}</td>
+                <td className="px-4 py-3.5">
+                  {event.venue ? (
+                    <>
+                      <p className="text-paper/80">{event.venue.name}</p>
+                      {event.city && (
+                        <p className="mt-0.5 label-mono text-paper/40">{event.city}</p>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-paper/40">—</span>
+                  )}
+                </td>
                 <td className="px-4 py-3.5">
                   <EventStatusBadge status={event.status} />
                 </td>
@@ -204,33 +200,11 @@ function EventsTable({
                 </td>
                 <td className="px-4 py-3.5">
                   {/* Above the row link so the buttons still get their own clicks. */}
-                  <div className="relative z-10 flex justify-end gap-1.5">
-                    {event.status === 'DRAFT' && (
-                      <ConfirmButton
-                        instant
-                        onConfirm={() => setStatus(event, 'PUBLISHED', 'is live')}
-                      >
-                        Publish
-                      </ConfirmButton>
-                    )}
-                    {event.status === 'PUBLISHED' && (
-                      <ConfirmButton
-                        confirmLabel="Unpublish?"
-                        onConfirm={() => setStatus(event, 'DRAFT', 'moved back to drafts')}
-                      >
-                        Unpublish
-                      </ConfirmButton>
-                    )}
-                    {(event.status === 'DRAFT' || event.status === 'PUBLISHED') && (
-                      <ConfirmButton
-                        tone="danger"
-                        confirmLabel="Cancel event?"
-                        onConfirm={() => setStatus(event, 'CANCELLED', 'was cancelled')}
-                      >
-                        Cancel
-                      </ConfirmButton>
-                    )}
-                  </div>
+                  <EventStatusActions
+                    event={event}
+                    onUpdated={onUpdated}
+                    className="relative z-10 justify-end"
+                  />
                 </td>
               </motion.tr>
             )

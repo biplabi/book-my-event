@@ -20,13 +20,29 @@ export interface TicketType {
   availableSeatCount: number
 }
 
+export interface Address {
+  street: string
+  city: string
+  pinCode: string
+  country: string
+}
+
+export interface Venue {
+  id: number
+  name: string
+  seatCapacity: number
+  address: Address | null
+  createdAt?: string
+}
+
 export interface EventSummary {
   id: number
   name: string
   artists: Artist[]
   ticketTypes: TicketType[]
   eventCategory: EventCategory
-  /** City of the venue; null when the venue has no address. */
+  venue: Venue | null
+  /** Same as `venue.address.city`; null when the venue has no address. */
   city: string | null
   /** Local date-time without offset, e.g. `2026-11-14T19:30:00`. */
   startDateTime: string

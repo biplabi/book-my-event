@@ -4,6 +4,7 @@ import { AdminLayout } from '@/features/admin/components/AdminLayout'
 import { AdminArtistDetailsPage } from '@/features/admin/pages/AdminArtistDetailsPage'
 import { AdminArtistsPage } from '@/features/admin/pages/AdminArtistsPage'
 import { AdminBookingsPage } from '@/features/admin/pages/AdminBookingsPage'
+import { AdminEventDetailsPage } from '@/features/admin/pages/AdminEventDetailsPage'
 import { AdminEventsPage } from '@/features/admin/pages/AdminEventsPage'
 import { AdminNewEventPage } from '@/features/admin/pages/AdminNewEventPage'
 import { AdminUsersPage } from '@/features/admin/pages/AdminUsersPage'
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to={paths.adminEvents} replace /> },
       { path: paths.adminEvents, element: <AdminEventsPage /> },
       { path: paths.adminNewEvent, element: <AdminNewEventPage /> },
+      { path: paths.adminEvent, element: <AdminEventDetailsPage /> },
       { path: paths.adminVenues, element: <AdminVenuesPage /> },
       { path: paths.adminArtists, element: <AdminArtistsPage /> },
       { path: paths.adminArtist, element: <AdminArtistDetailsPage /> },

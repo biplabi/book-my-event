@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
-import { eventPath } from '@/config/routes'
+import { adminEventPath } from '@/config/routes'
 import type { UserProfile } from '@/features/auth/types'
 import type { EventSummary } from '@/features/events/types'
 import { formatPrice } from '@/features/events/utils/format'
@@ -126,7 +126,7 @@ function BookingsView({
                 <td className="px-4 py-3.5 font-mono text-xs text-paper/45">{b.id}</td>
                 <td className="px-4 py-3.5 font-medium text-paper">
                   <Link
-                    to={eventPath(b.eventId)}
+                    to={adminEventPath(b.eventId)}
                     className="underline-offset-4 transition-colors hover:text-brand hover:underline focus-visible:underline focus-visible:outline-none"
                   >
                     {eventName.get(b.eventId) ?? `Event #${b.eventId}`}
