@@ -37,29 +37,32 @@ public class VenueServiceImpl implements VenueService {
                 .build();
         Venue savedVenue = venueRepository.save(venue);
 
-        return modelMapper.map(savedVenue, VenueResponseDto.class);
+        return toResponseDto(savedVenue);
     }
 
     @Override
     public List<VenueResponseDto> getAllVenue() {
         List<Venue> venueList = venueRepository.findAll();
-        return toVenueResponse(venueList);
+        return venueList.stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
-    private List<VenueResponseDto> toVenueResponse(List<Venue> venueList) {
-        return venueList.stream()
-                .map(venue -> {
-                    return VenueResponseDto.builder()
-                            .id(venue.getId())
-                            .name(venue.getName())
-                            .seatCapacity(venue.getSeatCapacity())
-                            .address(toAddressResponseDto(venue.getAddress()))
-                            .createdAt(venue.getCreatedAt())
-                            .build();
-                }).toList();
+    @Override
+    public VenueResponseDto toResponseDto(Venue venue) {
+        return VenueResponseDto.builder()
+                .id(venue.getId())
+                .name(venue.getName())
+                .seatCapacity(venue.getSeatCapacity())
+                .address(toAddressResponseDto(venue.getAddress()))
+                .createdAt(venue.getCreatedAt())
+                .build();
     }
 
     private AddressResponseDto toAddressResponseDto(Address address) {
+        if(address == null) {
+            return null;
+        }
         return AddressResponseDto.builder()
                 .street(address.getStreet())
                 .city(address.getCity())
