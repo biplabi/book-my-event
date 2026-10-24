@@ -22,6 +22,8 @@ storage:
   region: ${STORAGE_REGION:us-east-1}
   access-key: ${STORAGE_ACCESS_KEY:event-service}
   secret-key: ${STORAGE_SECRET_KEY:event-service-secret}
+  # Public bucket shared by all services. event-service may only write to artists/, events/
+  # and venues/ (minio/policies/event-service.json).
   bucket: ${STORAGE_BUCKET:bookmyevent-media}
   # Prefix for public image links: <public-base-url>/<imageKey>
   public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:9000/bookmyevent-media}

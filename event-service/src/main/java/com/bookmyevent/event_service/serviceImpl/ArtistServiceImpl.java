@@ -8,7 +8,7 @@ import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
 import com.bookmyevent.event_service.requestDto.UpdateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
 import com.bookmyevent.event_service.service.ArtistService;
-import com.bookmyevent.event_service.service.ImageStorageService;
+import com.bookmyevent.event_service.service.StorageService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ArtistServiceImpl implements ArtistService {
     @Autowired
     private ArtistRepository artistRepository;
     @Autowired
-    private ImageStorageService imageStorageService;
+    private StorageService storageService;
 
     @Override
     public ArtistResponseDto createArtist(CreateArtistRequestDto requestDto) {
@@ -98,7 +98,7 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public ArtistResponseDto toResponseDto(Artist artist) {
         ArtistResponseDto responseDto = modelMapper.map(artist, ArtistResponseDto.class);
-        responseDto.setImageUrl(imageStorageService.toPublicUrl(artist.getImageKey()));
+        responseDto.setImageUrl(storageService.toPublicUrl(artist.getImageKey()));
         return responseDto;
     }
 }
