@@ -33,6 +33,9 @@ export const adminApi = {
   listEvents: (token: string, signal?: AbortSignal) =>
     unwrap(apiRequest<ApiResponse<EventSummary[]>>(`${EVENTS}/event/`, { token, signal })),
 
+  getEvent: (token: string, id: number, signal?: AbortSignal) =>
+    unwrap(apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/event/${id}`, { token, signal })),
+
   createEvent: (token: string, body: CreateEventRequest) =>
     unwrap(
       apiRequest<ApiResponse<EventSummary>>(`${EVENTS}/event/`, { method: 'POST', token, body }),

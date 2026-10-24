@@ -1,4 +1,4 @@
-import type { EventSummary } from '../types'
+import type { Address, EventSummary } from '../types'
 
 const dayFormat = new Intl.DateTimeFormat(undefined, { day: '2-digit' })
 const monthFormat = new Intl.DateTimeFormat(undefined, { month: 'short' })
@@ -20,6 +20,13 @@ export function formatEventDate(iso: string) {
     weekday: weekdayFormat.format(d),
     time: timeFormat.format(d),
   }
+}
+
+/** One-line postal address, e.g. "Bidyut Marg, Nayapalli, Bhubaneswar 751012". */
+export function formatAddress(address: Address) {
+  return [address.street, [address.city, address.pinCode].filter(Boolean).join(' ')]
+    .filter(Boolean)
+    .join(', ')
 }
 
 export function formatPrice(amount: number) {

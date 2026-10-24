@@ -109,6 +109,7 @@ function EventForm({ venues, artists }: { venues: Venue[]; artists: Artist[] }) 
       id: 0,
       name: values.name?.trim() || 'Untitled event',
       eventCategory: (values.eventCategory || 'CONCERT') as EventCategory,
+      venue: venue ?? null,
       city: venue?.address?.city ?? null,
       startDateTime: values.startDateTime ?? '',
       endDateTime: values.endDateTime ?? '',

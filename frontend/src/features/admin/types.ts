@@ -1,22 +1,16 @@
 // Mirrors the admin-facing DTOs of event-, booking- and user-service.
-import type { EventCategory, EventSummary, TicketTier } from '@/features/events/types'
+import type {
+  Address,
+  EventCategory,
+  EventSummary,
+  TicketTier,
+  Venue,
+} from '@/features/events/types'
 
 export type EventStatus = EventSummary['status']
 
-export interface Address {
-  street: string
-  city: string
-  pinCode: string
-  country: string
-}
-
-export interface Venue {
-  id: number
-  name: string
-  seatCapacity: number
-  address: Address | null
-  createdAt?: string
-}
+// Venues come back inside events too, so their types live with the events feature.
+export type { Address, Venue }
 
 export interface CreateVenueRequest {
   name: string

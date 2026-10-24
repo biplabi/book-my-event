@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
-import { eventPath, paths } from '@/config/routes'
+import { adminEventPath, paths } from '@/config/routes'
 import { ArtistAvatar } from '@/features/events/components/ArtistAvatar'
 import type { Artist, EventSummary } from '@/features/events/types'
 import { categories } from '@/features/events/utils/categories'
@@ -212,9 +212,9 @@ function ArtistProfile({
                     className="group relative border-b border-paper/[0.06] last:border-0 hover:bg-paper/[0.03]"
                   >
                     <td className="px-4 py-3.5">
-                      {/* Stretched link: the whole row opens the event page. */}
+                      {/* Stretched link: the whole row opens the admin event page. */}
                       <Link
-                        to={eventPath(event.id)}
+                        to={adminEventPath(event.id)}
                         className="font-medium text-paper outline-none after:absolute after:inset-0 after:content-[''] focus-visible:underline"
                       >
                         {event.name}

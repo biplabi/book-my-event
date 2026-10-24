@@ -14,7 +14,7 @@ import { eventsApi } from '@/features/events/api/events.api'
 import { ArtistAvatar } from '@/features/events/components/ArtistAvatar'
 import type { Artist, EventSummary, TicketType } from '@/features/events/types'
 import { categories } from '@/features/events/utils/categories'
-import { formatPrice, lowestPrice, seatsLeft } from '@/features/events/utils/format'
+import { formatAddress, formatPrice, lowestPrice, seatsLeft } from '@/features/events/utils/format'
 import { useResource } from '@/hooks/useResource'
 import { ApiError } from '@/lib/api-client'
 import { cn } from '@/lib/cn'
@@ -179,8 +179,19 @@ function EventDetails({ event, showStatus }: { event: EventSummary; showStatus: 
               'To be announced'
             )}
           </Fact>
-          <Fact icon={MapPin} label="City">
-            {event.city ?? 'Venue to be announced'}
+          <Fact icon={MapPin} label="Venue">
+            {event.venue ? (
+              <>
+                {event.venue.name}
+                {event.venue.address && (
+                  <span className="mt-0.5 block text-sm text-paper/50">
+                    {formatAddress(event.venue.address)}
+                  </span>
+                )}
+              </>
+            ) : (
+              'To be announced'
+            )}
           </Fact>
         </motion.dl>
 
