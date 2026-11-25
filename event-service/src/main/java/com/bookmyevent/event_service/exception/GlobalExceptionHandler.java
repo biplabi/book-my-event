@@ -24,6 +24,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(ResourceInUseException.class)
+    public ResponseEntity<CustomErrorResponse> handleResourceInUseException(ResourceInUseException ex, HttpServletRequest request) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                false,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
     @ExceptionHandler(InsufficientSeatCapacityException.class)
     public ResponseEntity<CustomErrorResponse> handleInsufficientSeatCapacityException(InsufficientSeatCapacityException ex, HttpServletRequest request) {
         CustomErrorResponse errorResponse = new CustomErrorResponse(

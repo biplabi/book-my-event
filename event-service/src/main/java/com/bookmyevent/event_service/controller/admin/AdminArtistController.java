@@ -41,4 +41,10 @@ public class AdminArtistController {
         ArtistResponseDto responseDto = artistService.updateArtist(id, requestDto);
         return ResponseEntity.ok(new ApiResponse<>(true, "Artist updated successfully!", responseDto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteArtistById(@PathVariable Long id) {
+        artistService.deleteArtistById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

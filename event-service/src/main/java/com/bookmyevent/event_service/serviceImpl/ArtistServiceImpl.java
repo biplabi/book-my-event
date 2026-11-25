@@ -2,8 +2,11 @@ package com.bookmyevent.event_service.serviceImpl;
 
 import com.bookmyevent.event_service.entity.Artist;
 import com.bookmyevent.event_service.exception.DuplicateResourceException;
+import com.bookmyevent.event_service.exception.ResourceInUseException;
 import com.bookmyevent.event_service.exception.ResourceNotFoundException;
+import com.bookmyevent.event_service.listener.ImageRemovedEvent;
 import com.bookmyevent.event_service.repository.ArtistRepository;
+import com.bookmyevent.event_service.repository.EventRepository;
 import com.bookmyevent.event_service.requestDto.CreateArtistRequestDto;
 import com.bookmyevent.event_service.requestDto.UpdateArtistRequestDto;
 import com.bookmyevent.event_service.responseDto.ArtistResponseDto;
@@ -12,6 +15,7 @@ import com.bookmyevent.event_service.service.StorageService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +30,10 @@ public class ArtistServiceImpl implements ArtistService {
     private ArtistRepository artistRepository;
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public ArtistResponseDto createArtist(CreateArtistRequestDto requestDto) {
@@ -91,6 +99,24 @@ public class ArtistServiceImpl implements ArtistService {
         return toResponseDto(artistRepository.save(artist));
     }
 
+    @Override
+    @Transactional
+    public void deleteArtistById(Long id) {
+        Artist artist = artistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Artist not found with id: " + id));
+
+        // Events keep their lineup (past ones too), so an artist in any event can't be removed.
+        long eventCount = eventRepository.countByArtists_Id(id);
+        if(eventCount > 0) {
+            throw new ResourceInUseException("Artist can't be deleted while they're part of " + eventCount + " event(s)!");
+        }
+
+        artistRepository.delete(artist);
+        if(artist.getImageKey() != null) {
+            // Handled after the commit, so the photo is only removed once the artist is really gone.
+            eventPublisher.publishEvent(new ImageRemovedEvent(artist.getImageKey()));
+        }
+    }
+
     private String blankToNull(String value) {
         return value.isBlank() ? null : value;
     }
@@ -101,4 +127,6 @@ public class ArtistServiceImpl implements ArtistService {
         responseDto.setImageUrl(storageService.toPublicUrl(artist.getImageKey()));
         return responseDto;
     }
+
+
 }
