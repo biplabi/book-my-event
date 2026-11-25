@@ -87,6 +87,8 @@ services:
       spring_datasource_password: root
       # Upload links are opened by the browser, so they must point at localhost, not "minio".
       STORAGE_ENDPOINT: http://localhost:9000
+      # event-service's own calls to MinIO (deleting files) go over the Docker network.
+      STORAGE_INTERNAL_ENDPOINT: http://minio:9000
       STORAGE_ACCESS_KEY: event-service
       STORAGE_SECRET_KEY: event-service-secret
       STORAGE_BUCKET: bookmyevent-media
