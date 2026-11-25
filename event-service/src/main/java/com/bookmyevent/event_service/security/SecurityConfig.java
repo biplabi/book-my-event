@@ -3,7 +3,6 @@ package com.bookmyevent.event_service.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,11 +23,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Let error responses through so clients see the real status, not a 403.
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/event/", "/venue/", "/artist/", "/artist/image-upload-url").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/event/*/status").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/artist/*").hasRole("ADMIN")
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/**").hasRole("USER")
+                        // Everything an admin can do lives under /admin, so one rule guards it all.
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

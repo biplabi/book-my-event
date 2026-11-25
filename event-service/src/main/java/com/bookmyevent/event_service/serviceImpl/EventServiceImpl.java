@@ -81,21 +81,32 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventResponseDto> getAllEvents(boolean includeUnpublished) {
-        List<Event> eventList = includeUnpublished
-                ? eventRepository.findAll()
-                : eventRepository.findByStatus(EventStatus.PUBLISHED);
-        List<EventResponseDto> eventResponseDtos = eventList.stream()
+    public List<EventResponseDto> getPublishedEvents() {
+        return eventRepository.findByStatus(EventStatus.PUBLISHED).stream()
                 .map(this::toResponseDto)
                 .toList();
-        return eventResponseDtos;
+    }
+
+    @Override
+    public EventResponseDto getPublishedEventById(Long id) {
+        // Same 404 as a missing event, so users can't tell that a draft exists.
+        Event event = eventRepository.findByIdAndStatus(id, EventStatus.PUBLISHED)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
+
+        return toResponseDto(event);
+    }
+
+    @Override
+    public List<EventResponseDto> getAllEvents() {
+        return eventRepository.findAll().stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
     @Override
     public EventResponseDto getEventById(Long id) {
-
-        Optional<Event> eventOptional = eventRepository.findById(id);
-        Event event = eventOptional.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 
         return toResponseDto(event);
     }

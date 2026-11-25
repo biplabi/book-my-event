@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "event-service", url = "${event.service.url}")
 public interface EventServiceClient {
 
-    @GetMapping("/event/{id}")
+    /** The user-facing lookup: drafts come back as 404, so they can't be booked. */
+    @GetMapping("/events/{id}")
     ApiResponse<EventResponseDto> getEventById(@PathVariable Long id);
 }
