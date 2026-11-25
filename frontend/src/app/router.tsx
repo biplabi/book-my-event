@@ -1,65 +1,113 @@
 import { createBrowserRouter, Navigate } from 'react-router'
+import { FullScreenLoader } from '@/components/layout/FullScreenLoader'
 import { paths } from '@/config/routes'
-import { AdminLayout } from '@/features/admin/components/AdminLayout'
-import { AdminArtistDetailsPage } from '@/features/admin/pages/AdminArtistDetailsPage'
-import { AdminArtistsPage } from '@/features/admin/pages/AdminArtistsPage'
-import { AdminBookingsPage } from '@/features/admin/pages/AdminBookingsPage'
-import { AdminEventDetailsPage } from '@/features/admin/pages/AdminEventDetailsPage'
-import { AdminEventsPage } from '@/features/admin/pages/AdminEventsPage'
-import { AdminNewEventPage } from '@/features/admin/pages/AdminNewEventPage'
-import { AdminUsersPage } from '@/features/admin/pages/AdminUsersPage'
-import { AdminVenuesPage } from '@/features/admin/pages/AdminVenuesPage'
-import { AuthPage } from '@/pages/AuthPage'
-import { EventDetailsPage } from '@/pages/EventDetailsPage'
-import { HomePage } from '@/pages/HomePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AdminRoute, ProtectedRoute, PublicOnlyRoute } from './routes/guards'
 
+// Each page is its own chunk, downloaded the first time its route is visited, so customers
+// never load the admin pages. The guards stay in the main bundle and run before any download.
 export const router = createBrowserRouter([
-  { path: paths.root, element: <Navigate to={paths.login} replace /> },
   {
-    // One layout route for both modes so switching animates instead of remounting.
-    element: (
-      <PublicOnlyRoute>
-        <AuthPage />
-      </PublicOnlyRoute>
-    ),
-    children: [{ path: paths.login }, { path: paths.register }],
-  },
-  {
-    path: paths.home,
-    element: (
-      <ProtectedRoute>
-        <HomePage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: paths.event,
-    element: (
-      <ProtectedRoute>
-        <EventDetailsPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: paths.admin,
-    element: (
-      <AdminRoute>
-        <AdminLayout />
-      </AdminRoute>
-    ),
+    // Shown while the first page's chunk downloads.
+    hydrateFallbackElement: <FullScreenLoader />,
     children: [
-      { index: true, element: <Navigate to={paths.adminEvents} replace /> },
-      { path: paths.adminEvents, element: <AdminEventsPage /> },
-      { path: paths.adminNewEvent, element: <AdminNewEventPage /> },
-      { path: paths.adminEvent, element: <AdminEventDetailsPage /> },
-      { path: paths.adminVenues, element: <AdminVenuesPage /> },
-      { path: paths.adminArtists, element: <AdminArtistsPage /> },
-      { path: paths.adminArtist, element: <AdminArtistDetailsPage /> },
-      { path: paths.adminBookings, element: <AdminBookingsPage /> },
-      { path: paths.adminUsers, element: <AdminUsersPage /> },
+      { path: paths.root, element: <Navigate to={paths.login} replace /> },
+      {
+        element: <PublicOnlyRoute />,
+        children: [
+          {
+            // One layout route for both modes so switching animates instead of remounting.
+            lazy: () => import('@/pages/AuthPage').then((m) => ({ Component: m.AuthPage })),
+            children: [{ path: paths.login }, { path: paths.register }],
+          },
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: paths.home,
+            lazy: () => import('@/pages/HomePage').then((m) => ({ Component: m.HomePage })),
+          },
+          {
+            path: paths.event,
+            lazy: () =>
+              import('@/pages/EventDetailsPage').then((m) => ({ Component: m.EventDetailsPage })),
+          },
+        ],
+      },
+      {
+        element: <AdminRoute />,
+        children: [
+          {
+            path: paths.admin,
+            lazy: () =>
+              import('@/features/admin/components/AdminLayout').then((m) => ({
+                Component: m.AdminLayout,
+              })),
+            children: [
+              { index: true, element: <Navigate to={paths.adminEvents} replace /> },
+              {
+                path: paths.adminEvents,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminEventsPage').then((m) => ({
+                    Component: m.AdminEventsPage,
+                  })),
+              },
+              {
+                path: paths.adminNewEvent,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminNewEventPage').then((m) => ({
+                    Component: m.AdminNewEventPage,
+                  })),
+              },
+              {
+                path: paths.adminEvent,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminEventDetailsPage').then((m) => ({
+                    Component: m.AdminEventDetailsPage,
+                  })),
+              },
+              {
+                path: paths.adminVenues,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminVenuesPage').then((m) => ({
+                    Component: m.AdminVenuesPage,
+                  })),
+              },
+              {
+                path: paths.adminArtists,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminArtistsPage').then((m) => ({
+                    Component: m.AdminArtistsPage,
+                  })),
+              },
+              {
+                path: paths.adminArtist,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminArtistDetailsPage').then((m) => ({
+                    Component: m.AdminArtistDetailsPage,
+                  })),
+              },
+              {
+                path: paths.adminBookings,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminBookingsPage').then((m) => ({
+                    Component: m.AdminBookingsPage,
+                  })),
+              },
+              {
+                path: paths.adminUsers,
+                lazy: () =>
+                  import('@/features/admin/pages/AdminUsersPage').then((m) => ({
+                    Component: m.AdminUsersPage,
+                  })),
+              },
+            ],
+          },
+        ],
+      },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
-  { path: '*', element: <NotFoundPage /> },
 ])
