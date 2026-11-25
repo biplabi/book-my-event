@@ -85,6 +85,10 @@ export const adminApi = {
       }),
     ),
 
+  /** 204 on success; 409 while any event still lists the artist. Also removes their photo. */
+  deleteArtist: (token: string, id: number) =>
+    apiRequest<void>(`${EVENTS}/admin/artists/${id}`, { method: 'DELETE', token }),
+
   /**
    * Uploads an artist photo and returns its key for `createArtist`. event-service signs a
    * short-lived link, then the file goes straight from the browser to MinIO.

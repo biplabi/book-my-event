@@ -15,6 +15,7 @@ import { ApiError } from '@/lib/api-client'
 import { adminApi } from '../api/admin.api'
 import { EmptyRow, TableShell, Th } from '../components/AdminPage'
 import { ArtistForm } from '../components/ArtistForm'
+import { DeleteArtistButton } from '../components/DeleteArtistButton'
 import { Sheet } from '../components/Sheet'
 import { EventStatusBadge } from '../components/StatusBadge'
 import { describeAdminError } from '../utils/errors'
@@ -136,14 +137,13 @@ function ArtistProfile({
             {artist.stageName}
           </h1>
         </div>
-        <Button
-          variant="secondary"
-          onClick={onEdit}
-          className="h-10 self-start px-4 text-sm sm:ml-auto sm:self-center"
-        >
-          <Pencil className="size-4" aria-hidden />
-          Edit
-        </Button>
+        <div className="flex gap-2 self-start sm:ml-auto sm:self-center">
+          <Button variant="secondary" onClick={onEdit} className="h-10 px-4 text-sm">
+            <Pencil className="size-4" aria-hidden />
+            Edit
+          </Button>
+          <DeleteArtistButton artist={artist} eventCount={events ? theirs.length : null} />
+        </div>
       </motion.section>
 
       {artist.bio && (
