@@ -29,7 +29,7 @@ export interface CreateArtistRequest {
 }
 
 /**
- * Body of PUT /artist/{id}. Fields left out keep their current value;
+ * Body of PUT /admin/artists/{id}. Fields left out keep their current value;
  * send `''` for `bio` or `country` to clear it.
  */
 export interface UpdateArtistRequest extends Partial<CreateArtistRequest> {
@@ -37,7 +37,7 @@ export interface UpdateArtistRequest extends Partial<CreateArtistRequest> {
   removeImage?: boolean
 }
 
-/** Response of POST /artist/image-upload-url. */
+/** Response of POST /admin/artists/image-upload-url. */
 export interface ImageUploadTicket {
   /** Signed MinIO link; PUT the file here within a few minutes. */
   uploadUrl: string
