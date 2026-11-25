@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { Spinner } from './Spinner'
 
-type Variant = 'primary' | 'secondary' | 'ghost'
+type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
@@ -14,6 +14,9 @@ const variants: Record<Variant, string> = {
   primary: 'bg-brand text-paper hover:bg-brand-hover',
   secondary:
     'border border-paper/15 text-paper/90 hover:border-paper/35 hover:bg-paper/[0.04] hover:text-paper',
+  /** Looks like `secondary` until hovered, so destructive actions don't shout. */
+  danger:
+    'border border-paper/15 text-paper/80 hover:border-signal/50 hover:bg-signal/[0.06] hover:text-signal',
   ghost: 'text-paper/60 hover:bg-paper/[0.06] hover:text-paper',
 }
 
