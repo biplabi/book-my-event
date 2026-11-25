@@ -13,7 +13,8 @@ public interface ArtistService {
     List<ArtistResponseDto> getAllArtists();
     ArtistResponseDto getArtist(Long id);
     ArtistResponseDto updateArtist(Long id, UpdateArtistRequestDto requestDto);
-
+    /** Refuses with ResourceInUseException while any event still lists the artist. */
+    void deleteArtistById(Long id);
     /** Entity to DTO, turning the stored image key into a public image URL. */
     ArtistResponseDto toResponseDto(Artist artist);
 }

@@ -7,6 +7,7 @@ import com.bookmyevent.event_service.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
@@ -21,6 +22,8 @@ public class StorageServiceImpl implements StorageService {
 
     @Autowired
     private S3Presigner s3Presigner;
+    @Autowired
+    private S3Client s3Client;
     @Value("${storage.bucket}")
     private String bucket;
     @Value("${storage.public-base-url}")
@@ -46,6 +49,11 @@ public class StorageServiceImpl implements StorageService {
                 .putObjectRequest(putRequest));
 
         return new ImageUploadResponseDto(presigned.url().toString(), key, toPublicUrl(key));
+    }
+
+    @Override
+    public void deleteObject(String key) {
+        s3Client.deleteObject(delete -> delete.bucket(bucket).key(key));
     }
 
     @Override

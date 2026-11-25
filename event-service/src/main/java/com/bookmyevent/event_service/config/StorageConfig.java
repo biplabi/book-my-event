@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
@@ -14,6 +15,7 @@ import java.net.URI;
 /**
  * Points the AWS S3 SDK at MinIO. The presigner only signs upload links locally;
  * it never connects to MinIO, so the endpoint is the browser-facing address.
+ * The client does connect, so it uses the address event-service itself can reach.
  */
 @Configuration
 public class StorageConfig {
@@ -32,6 +34,20 @@ public class StorageConfig {
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(true)
                         .build())
+                .build();
+    }
+
+    @Bean
+    public S3Client s3Client(@Value("${storage.internal-endpoint}") String endpoint,
+                             @Value("${storage.region}") String region,
+                             @Value("${storage.access-key}") String accessKey,
+                             @Value("${storage.secret-key}") String secretKey) {
+        return S3Client.builder()
+                .endpointOverride(URI.create(endpoint))
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .forcePathStyle(true)
                 .build();
     }
 }
