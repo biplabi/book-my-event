@@ -354,7 +354,7 @@ function EventForm({ venues, artists }: { venues: Venue[]; artists: Artist[] }) 
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-paper/10 pt-4">
             <Button
               variant="secondary"
-              className="h-9 px-3 text-sm"
+              size="sm"
               disabled={unusedTiers.length === 0}
               onClick={() => append({ type: unusedTiers[0]!, price: '', seatCount: '' })}
             >

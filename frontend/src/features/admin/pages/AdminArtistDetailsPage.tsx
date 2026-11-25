@@ -138,7 +138,7 @@ function ArtistProfile({
           </h1>
         </div>
         <div className="flex gap-2 self-start sm:ml-auto sm:self-center">
-          <Button variant="secondary" onClick={onEdit} className="h-10 px-4 text-sm">
+          <Button variant="secondary" size="md" onClick={onEdit}>
             <Pencil className="size-4" aria-hidden />
             Edit
           </Button>
