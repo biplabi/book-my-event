@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/Button'
 import { paths } from '@/config/routes'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import type { Artist } from '@/features/events/types'
-import { cn } from '@/lib/cn'
 import { adminApi } from '../api/admin.api'
 import { describeAdminError } from '../utils/errors'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -50,7 +49,8 @@ export function DeleteArtistButton({
         variant="danger"
         onClick={() => setOpen(true)}
         disabled={eventCount === null}
-        className={cn('h-10 px-4 text-sm', className)}
+        size="md"
+        className={className}
       >
         <Trash2 className="size-4" aria-hidden />
         Delete

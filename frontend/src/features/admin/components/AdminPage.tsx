@@ -64,7 +64,7 @@ export function ResourceView<T>({
         }
         action={
           resource.reload && (
-            <Button variant="secondary" onClick={resource.reload} className="h-9 px-3 text-sm">
+            <Button variant="secondary" size="sm" onClick={resource.reload}>
               <RefreshCw className="size-4" aria-hidden />
               Try again
             </Button>

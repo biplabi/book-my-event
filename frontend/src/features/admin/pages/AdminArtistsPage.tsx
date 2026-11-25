@@ -24,7 +24,7 @@ export function AdminArtistsPage() {
         count={artists.status === 'success' ? artists.data.length : undefined}
         description="Performers you can add to an event's lineup."
         actions={
-          <Button className="h-10 px-4 text-sm" onClick={() => setOpen(true)}>
+          <Button size="md" onClick={() => setOpen(true)}>
             <Plus className="size-4" aria-hidden />
             New artist
           </Button>

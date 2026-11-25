@@ -80,17 +80,11 @@ export function ConfirmDialog({
               {children}
             </div>
             <div className="mt-6 flex justify-end gap-2">
-              <Button
-                variant="secondary"
-                onClick={close}
-                disabled={busy}
-                autoFocus
-                className="h-10 px-4 text-sm"
-              >
+              <Button variant="secondary" onClick={close} disabled={busy} autoFocus size="md">
                 {onConfirm ? 'Cancel' : 'OK'}
               </Button>
               {onConfirm && (
-                <Button onClick={confirm} loading={busy} className="h-10 px-4 text-sm">
+                <Button size="md" onClick={confirm} loading={busy}>
                   {confirmLabel ?? 'Confirm'}
                 </Button>
               )}

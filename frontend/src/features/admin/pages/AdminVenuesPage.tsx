@@ -28,7 +28,7 @@ export function AdminVenuesPage() {
         count={venues.status === 'success' ? venues.data.length : undefined}
         description="Places events happen. Capacity caps the seats an event can sell."
         actions={
-          <Button className="h-10 px-4 text-sm" onClick={() => setOpen(true)}>
+          <Button size="md" onClick={() => setOpen(true)}>
             <Plus className="size-4" aria-hidden />
             New venue
           </Button>

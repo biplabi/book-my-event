@@ -34,7 +34,7 @@ export function SiteHeader() {
           >
             {initials}
           </span>
-          <Button variant="ghost" onClick={logout} className="h-9 px-3 text-sm">
+          <Button variant="ghost" size="sm" onClick={logout}>
             <LogOut className="size-4" aria-hidden />
             <span className="hidden sm:inline">Sign out</span>
           </Button>

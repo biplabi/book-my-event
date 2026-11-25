@@ -76,7 +76,7 @@ export function EventCatalogue() {
               result.error instanceof ApiError && result.error.isNetworkError ? 'offline' : 'error'
             }
             action={
-              <Button variant="secondary" onClick={result.retry} className="h-9 px-3 text-sm">
+              <Button variant="secondary" size="sm" onClick={result.retry}>
                 <RefreshCw className="size-4" aria-hidden />
                 Try again
               </Button>
